@@ -1,0 +1,37 @@
+# local-path-provisioner
+LOCAL_PATH_PROVISIONER_TAG: "v0.0.19"
+
+# ingress-nginx
+INGRESS_NGINX_CONTROLLER_TAG: "v1.0.3"
+INGRESS_NGINX_KUBE_WEBHOOK_CERTGEN_TAG: "v1.0"
+
+# bitnami/mongodb
+MONGODB_TAG: "4.4.8-debian-10-r23"
+MONGODB_EXPORTER_TAG: "0.11.2-debian-10-r245"
+
+# prometheus-operator/prometheus-config-reloader
+PROMETHEUS_OPERATOR_PROMETHEUS_CONFIG_RELOADER_TAG:
+# quay.io/prometheus/prometheus
+PROMETHEUS_PROMETHEUS_TAG: "v2.28.1"
+# busybox
+BUSYBOX_TAG: "1.33.1"
+
+# bitnami/...
+BITNAMI_SHELL_TAG: "10-debian-10-r117"
+
+# kube-prometheus-stack
+PROMETHEUS_ALERTMANAGER_TAG: "v0.23.0"
+K8S_SIDECAR_TAG: "1.12.3"
+# kube-state-metrics/kube-state-metrics
+KUBE_STATE_METRICS_TAG: "v2.2.0"
+# prometheus/node-exporter
+PROMETHEUS_NODE_EXPORTER_TAG: "v1.2.2"
+PROMETHEUS_OPERATOR_TAG: "v0.50.0"
+
+
+GRAFANA_TAG: "8.2.3"
+
+
+# grafana logging stack
+PROMTAIL_TAG: "2.3.0"
+LOKI_TAG: "2.3.0"

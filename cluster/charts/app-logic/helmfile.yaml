@@ -1,0 +1,85 @@
+# yaml-language-server: $schema=https://json.schemastore.org/helmfile.json
+
+helmDefaults:
+  timeout: 600
+  skipDeps: true
+  historyMax: 2
+
+missingFileHandler: Error
+
+environments:
+  default:
+    values:
+      - ../tags.yaml
+      - ../config.yaml
+      - ../infra_env.yaml
+
+repositories:
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+
+releases:
+  - name: grafana
+    chart: bitnami/grafana
+    version: 7.0.8
+    values:
+    - image:
+        name: "{{ .Values.DOCKER_IO }}/grafana/grafana"
+        tag: "{{ .Values.GRAFANA_TAG }}"
+        pullPolicy: IfNotPresent
+    - persistence:
+        enable: true
+    - ingress:
+        enabled: true
+        hostname: {{ tpl "grafana.aa.{{ .Values.environment_name }}.com" . }}
+    - grafana:
+        replicaCount: 1
+        extraEnvVars:
+        - name: GF_SERVER_DOMAIN
+          value: {{ tpl "grafana.aa.{{ .Values.environment_name }}.com" . }}
+        - name: GF_SERVER_PROTOCOL
+          value: "http"
+        - name: GF_SERVER_SERVE_FROM_SUB_PATH
+          value: "true"
+        - name: GF_SERVER_ROOT_URL
+          value: "%(protocol)s://%(domain)s/"
+        - name: GF_LOG_MODE
+          value: "console"
+        - name: GF_LOG_LEVEL
+          value: "debug"
+        - name: GF_LOG_FILTERS
+          value: "alerting.scheduler:info"
+        - name: GF_SMTP_ENABLED
+          value: "true"
+        - name: GF_SMTP_HOST
+          value: "email-smtp:25"
+        - name: GF_SMTP_FROM_ADDRESS
+          value: "{{ .Values.SMTP_FROM_ADDRESS }}"
+        - name: GF_SMTP_EHLO_IDENTITY
+          value: "localhost"
+        - name: GF_SMTP_STARTTLS_POLICY
+          value: "NoStartTLS"
+        - name: GF_ANALYTICS_REPORTING_ENABLED
+          value: "false"
+        - name: GF_ANALYTICS_CHECK_FOR_UPDATES
+          value: "false"
+        - name: GF_SECURITY_ADMIN_PASSWORD
+          value: "admin"
+        - name: GF_SECURITY_DISABLE_GRAVATAR
+          value: "true"
+        - name: GF_USERS_DEFAULT_THEME
+          value: "dark"
+        - name: GF_USERS_USER_INVITE_MAX_LIFETIME_DURATION
+          value: "4w"
+          
+  - name: predicter
+    chart: ../predicter-chart
+    namespace: default
+    values:
+    - image:
+        name: "{{ .Values.minikube }}/predicter"
+        tag: 1.0.0
+        pullPolicy: Always
+    - ingress:
+        enabled: true
+        hostname: {{ tpl "predicter.aa.{{ $.Values.environment_name }}.com" . }}

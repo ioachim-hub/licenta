@@ -1,0 +1,5 @@
+DOCKER_IO: "docker.io"
+K8S_GCR_IO: "k8s.gcr.io"
+GHCR_IO: "ghcr.io"
+QUAY_IO: "quay.io"
+minikube: "srp.minikube.com:5000"

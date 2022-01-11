@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=https://json.schemastore.org/helmfile.json
+
+environment_name: "minikube"
+
+DOCKER_IO: "srp.aa.minikube.com:5000"
+K8S_GCR_IO: "srp.aa.minikube.com:5000"
+GHCR_IO: "srp.aa.minikube.com:5000"
+QUAY_IO: "srp.aa.minikube.com:5000"
+minikube: "srp.aa.minikube.com:5000"
+
+
+SMTP_FROM_ADDRESS: "ioachim.lihor@gmail.com"
+
+tcpforwards:
+  "27017": "default/mongodb:27017"
+  "9093": "default/prometheus-alertmanager:9093"
+
+GRAFANA_NODE: null

@@ -1,0 +1,179 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "properties": {
+        "replicaCount": {
+            "type": "integer",
+            "default": 1
+        },
+        "image": {
+            "type": "object",
+            "properties": {
+                "repository": {
+                    "type": "string",
+                    "default": "rancher/local-path-provisioner"
+                },
+                "tag": {
+                    "type": "string",
+                    "default": "v0.0.19"
+                },
+                "pullPolicy": {
+                    "type": "string",
+                    "default": "IfNotPresent"
+                }
+            }
+        },
+        "helperImage": {
+            "type": "object",
+            "properties": {
+                "registrySecret": {
+                    "type": "string",
+                    "default": "busybox"
+                },
+                "tag": {
+                    "type": "string",
+                    "default": "latest"
+                }
+            }
+        },
+        "defaultSettings": {
+            "type": "object",
+            "properties": {
+                "registrySecret": {
+                    "type": "null",
+                    "default": null
+                }
+            }
+        },
+        "privateRegistry": {
+            "type": "object",
+            "properties": {
+                "registryUrl": {
+                    "type": "null",
+                    "default": null
+                },
+                "registryUser": {
+                    "type": "null",
+                    "default": null
+                },
+                "registryPasswd": {
+                    "type": "null",
+                    "default": null
+                }
+            }
+        },
+        "imagePullSecrets": {
+            "type": "array",
+            "default": "[]"
+        },
+        "nameOverride": {
+            "type": "string",
+            "default": ""
+        },
+        "fullnameOverride": {
+            "type": "string",
+            "default": ""
+        },
+        "storageClass": {
+            "type": "object",
+            "properties": {
+                "create": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "defaultClass": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "name": {
+                    "type": "string",
+                    "default": "local-path"
+                },
+                "reclaimPolicy": {
+                    "type": "string",
+                    "default": "Delete"
+                }
+            }
+        },
+        "nodePathMap": {
+            "type": "array",
+            "default": [],
+            "examples": [
+                [
+                    {
+                        "node": "DEFAULT_PATH_FOR_NON_LISTED_NODES",
+                        "paths": [
+                            "/opt/local-path-provisioner"
+                        ]
+                    }
+                ]
+            ]
+        },
+        "resources": {
+            "type": "object",
+            "default": "{}"
+        },
+        "rbac": {
+            "properties": {
+                "create": {
+                    "type": "boolean",
+                    "default": true
+                }
+            }
+        },
+        "serviceAccount": {
+            "properties": {
+                "create": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "name": {
+                    "type": "null",
+                    "default": null
+                }
+            }
+        },
+        "nodeSelector": {
+            "type": "object",
+            "default": "{}"
+        },
+        "tolerations": {
+            "type": "array",
+            "default": "[]"
+        },
+        "affinity": {
+            "type": "object",
+            "default": "{}"
+        },
+        "configmap": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "default": "local-path-config"
+                },
+                "setup": {
+                    "type": "string",
+                    "default": "",
+                    "examples": [
+                        "#!/bin/sh\nwhile getopts \"m:s:p:\" opt\ndo\n    case $opt in\n        p)\n        absolutePath=$OPTARG\n        ;;\n        s)\n        sizeInBytes=$OPTARG\n        ;;\n        m)\n        volMode=$OPTARG\n        ;;\n    esac\ndone\n\nmkdir -m 0777 -p ${absolutePath}"
+                    ]
+                },
+                "teardown": {
+                    "type": "string",
+                    "default": "",
+                    "examples": [
+                        "#!/bin/sh\nwhile getopts \"m:s:p:\" opt\ndo\n    case $opt in\n        p)\n        absolutePath=$OPTARG\n        ;;\n        s)\n        sizeInBytes=$OPTARG\n        ;;\n        m)\n        volMode=$OPTARG\n        ;;\n    esac\ndone\n\nrm -rf ${absolutePath}"
+                    ]
+                },
+                "helperPod": {
+                    "type": "string",
+                    "default": "",
+                    "examples": [
+                        "apiVersion: v1\nkind: Pod\nmetadata:\n  name: helper-pod\nspec:\n  containers:\n  - name: helper-pod\n    image: busybox"
+                    ]
+                }
+            }
+        }
+    }
+}

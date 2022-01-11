@@ -1,0 +1,4 @@
+Django==3.2.9
+pymongo==4.0
+
+pydantic==1.8.2

@@ -1,0 +1,18 @@
+{
+    "repo_url": "srp.aa.minikube.com:5000",
+    "push": true,
+    "pull_skip_if_exists": true,
+    "save": false,
+    "environment": "generic",
+    "backend": "podman",
+    "skopeo_config": {
+      "dest_compress_format": null,
+      "debug": false,
+      "format": "oci",
+      "retries": 2
+    },
+    "files": [
+      "./charts/imgs.docker.json"
+    ]
+  }
+  

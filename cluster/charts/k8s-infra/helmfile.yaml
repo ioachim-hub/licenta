@@ -1,0 +1,320 @@
+# yaml-language-server: $schema=https://json.schemastore.org/helmfile.json
+
+helmDefaults:
+  timeout: 600
+  skipDeps: true
+  historyMax: 2
+
+missingFileHandler: Error
+
+environments:
+  default:
+    values:
+      - ../tags.yaml
+      - ../config.yaml
+
+repositories:
+  - name: ingress-nginx
+    url: https://kubernetes.github.io/ingress-nginx
+  - name: prometheus-community
+    url: https://prometheus-community.github.io/helm-charts
+  - name: grafana
+    url: https://grafana.github.io/helm-charts
+
+
+releases:
+  # https://github.com/ebrianne/helm-charts/tree/master/charts/local-path-provisioner
+- name: local-path-provisioner
+  chart: ../local-path-provisioner-chart
+  namespace: local-path-provisioner
+  values:
+  - image:
+      repository: "{{ .Values.DOCKER_IO }}/rancher/local-path-provisioner"
+      tag: "{{ .Values.LOCAL_PATH_PROVISIONER_TAG }}"
+  - helperImage:
+      repository: "{{ .Values.DOCKER_IO }}/busybox"
+      tag: "{{ .Values.BUSYBOX_TAG }}"
+  - storageClass:
+      defaultClass: true
+      reclaimPolicy: Retain
+  - nodePathMap:
+    - node: DEFAULT_PATH_FOR_NON_LISTED_NODES
+      paths:
+        - /k8s-pv/local-path-provisioner
+  - configmap:
+      helperPod: |-
+        apiVersion: v1
+        kind: Pod
+        metadata:
+          name: helper-pod
+        spec:
+          containers:
+          - name: helper-pod
+            image: "{{ .Values.DOCKER_IO }}/busybox:{{ .Values.BUSYBOX_TAG }}"
+
+# https://github.com/kubernetes/ingress-nginx/blob/main/charts/ingress-nginx/
+# https://github.com/kubernetes/ingress-nginx/blob/main/charts/ingress-nginx/values.yaml
+- name: ingress-nginx
+  # ingress-nginx/ingress-nginx
+  chart: ingress-nginx/ingress-nginx
+  version: 4.0.5
+  namespace: ingress-nginx
+  values:
+    - tcp:
+      {{- toYaml .Values.tcpforwards | nindent 8 }}
+    - metrics:
+        enabled: true
+        # TODO: re-enable when we actually start monitoring
+        serviceMonitor:
+          enabled: false
+    - controller:
+        kind: DaemonSet
+        hostNetwork: true
+        image:
+          # k8s.gcr.io/ingress-nginx/controller
+          repository: "{{ .Values.K8S_GCR_IO }}/ingress-nginx/controller"
+          tag: "{{ .Values.INGRESS_NGINX_CONTROLLER_TAG }}"
+          digest: null
+          pullPolicy: IfNotPresent
+        service:
+          type: ClusterIP
+        ingressClassResource:
+          default: true
+        livenessProbe:
+          periodSeconds: 60
+          timeoutSeconds: 60
+        readinessProbe:
+          periodSeconds: 50
+          timeoutSeconds: 50
+        config:
+          worker-processes: 1
+          # https://blogs.akamai.com/2016/02/understanding-brotlis-potential.html
+          use-gzip: true
+          gzip-level: 6
+          enable-brotli: true
+          brotli-level: 4
+          use-http2: true
+          enable-real-ip: true
+          use-geoip: false
+
+        admissionWebhooks:
+          #   Error: UPGRADE FAILED: failed to create resource: Internal error occurred: failed calling webhook "validate.nginx.ingress.kubernetes.io": Post "https://ingress-nginx-controller-admission.default.svc:443/networking/v1beta1/ingresses?timeout=10s": x509: certificate is valid for minikubeCA, control-plane.minikube.internal, kubernetes.default.svc.cluster.local, kubernetes.default.svc, kubernetes.default, kubernetes, localhost, not ingress-nginx-controller-admission.default.svc
+          # https://github.com/kubernetes/ingress-nginx/issues/5968
+          # https://github.com/kubernetes/ingress-nginx/issues/5968#issuecomment-849772666
+          # Nicolae Rosia: for some reason I don't see ingress-nginx-admission-patch
+          enabled: false
+          patch:
+            image:
+              # k8s.gcr.io/ingress-nginx/kube-webhook-certgen
+              repository: "{{ .Values.K8S_GCR_IO }}/ingress-nginx/kube-webhook-certgen"
+              tag: "{{ .Values.INGRESS_NGINX_KUBE_WEBHOOK_CERTGEN_TAG }}"
+
+# https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/
+- name: prom
+  chart: prometheus-community/kube-prometheus-stack
+  version: 19.0.2
+  namespace: monitoring
+  wait: true
+  values:
+    - alertmanager:
+        enabled: true
+        ingress:
+          enabled: true
+          ingressClassName: nginx
+          hosts:
+            - {{ tpl "alertmanager.monitoring.{{ .Values.environment_name }}.com" . }}
+          paths:
+            - "/"
+          pathType: "ImplementationSpecific"
+        alertmanagerSpec:
+          image:
+            # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml#L397
+            # quay.io//prometheus/alertmanager
+            repository: "{{ .Values.QUAY_IO }}/prometheus/alertmanager"
+            tag: "{{ .Values.PROMETHEUS_ALERTMANAGER_TAG }}"
+            sha: ""
+          retention: 120h
+    # https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
+    - grafana:
+        enabled: true
+        ingress:
+          enabled: true
+          ingressClassName: nginx
+          hosts:
+            - {{ tpl "grafana.monitoring.{{ .Values.environment_name }}.com" . }}
+          path: "/"
+        image:
+          # https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml#L72
+          # docker.io/grafana/grafana
+          repository: "{{ .Values.DOCKER_IO }}/grafana/grafana"
+          tag: "{{ .Values.GRAFANA_TAG }}"
+          sha: ""
+        initChownData:
+          # https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml#L304
+          image:
+            repository: "{{ .Values.DOCKER_IO }}/busybox"
+            tag: "{{ .Values.BUSYBOX_TAG }}"
+            sha: ""
+        sidecar:
+          # https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml#L616
+          image:
+            repository: "{{ .Values.QUAY_IO }}/kiwigrid/k8s-sidecar"
+            tag: "{{ .Values.K8S_SIDECAR_TAG }}"
+            sha: ""
+        readinessProbe:
+          periodSeconds: 60
+        livenessProbe:
+          periodSeconds: 60
+    - kubeApiServer:
+        enabled: true
+    - kubelet:
+        enabled: true
+    - kubeControllerManager:
+        enabled: true
+    - coreDns:
+        enabled: true
+    - kubeDns:
+        enabled: false
+    - kubeEtcd:
+        enabled: true
+    - kubeScheduler:
+        enabled: true
+    - kubeProxy:
+        enabled: true
+    - kubeStateMetrics:
+        enabled: true
+    - nodeExporter:
+        enabled: true
+    - kube-state-metrics:
+        image:
+          # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-state-metrics/values.yaml#L3
+          repository: "{{ .Values.K8S_GCR_IO }}/kube-state-metrics/kube-state-metrics"
+          tag: "{{ .Values.KUBE_STATE_METRICS_TAG }}"
+          pullPolicy: IfNotPresent
+    - prometheus-node-exporter:
+        # https://github.com/prometheus-community/helm-charts/blob/main/charts/prometheus-node-exporter/values.yaml#L4
+        image:
+          repository: "{{ .Values.QUAY_IO }}/prometheus/node-exporter"
+          tag: "{{ .Values.PROMETHEUS_NODE_EXPORTER_TAG }}"
+          pullPolicy: IfNotPresent
+    - prometheusOperator:
+        enabled: true
+        admissionWebhooks:
+          patch:
+            image:
+              # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml#L1366
+              # k8s.gcr.io/ingress-nginx/kube-webhook-certgen
+              repository: "{{ .Values.K8S_GCR_IO }}/ingress-nginx/kube-webhook-certgen"
+              tag: "{{ .Values.INGRESS_NGINX_KUBE_WEBHOOK_CERTGEN_TAG }}"
+              sha: ""
+        image:
+          # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml#L1588
+          # quay.io/prometheus-operator/prometheus-operator
+          repository: "{{ .Values.QUAY_IO }}/prometheus-operator/prometheus-operator"
+          tag: "{{ .Values.PROMETHEUS_OPERATOR_TAG }}"
+          sha: ""
+        # prometheusDefaultBaseImage: quay.io/prometheus/prometheus
+        # alertmanagerDefaultBaseImage: quay.io/prometheus/alertmanager
+        prometheusConfigReloaderImage:
+          # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml#L1605
+          # quay.io/prometheus-operator/prometheus-config-reloader
+          repository: "{{ .Values.QUAY_IO }}/prometheus-operator/prometheus-config-reloader"
+          tag: "{{ .Values.PROMETHEUS_OPERATOR_TAG }}"
+          sha: ""
+    - prometheus:
+        enabled: true
+        ingress:
+          enabled: true
+          ingressClassName: nginx
+          hosts:
+            - {{ tpl "prometheus.monitoring.{{ .Values.environment_name }}.com" . }}
+          paths:
+            - /
+          pathType: ImplementationSpecific
+        prometheusSpec:
+          image:
+            # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml#L2013
+            # quay.io/prometheus/prometheus
+            repository: "{{ .Values.QUAY_IO }}/prometheus/prometheus"
+            tag: "{{ .Values.PROMETHEUS_PROMETHEUS_TAG }}"
+            sha: ""
+          retention: 10d
+          podMonitorSelectorNilUsesHelmValues: false
+          serviceMonitorSelectorNilUsesHelmValues: false
+
+# https://github.com/grafana/helm-charts/tree/main/charts/loki
+- name: loki
+  chart: grafana/loki
+  version: 2.6.0
+  namespace: monitoring
+  values:
+    - image:
+        repository: "{{ .Values.DOCKER_IO }}/grafana/loki"
+        tag: {{ .Values.LOKI_TAG }}
+        pullPolicy: IfNotPresent
+    - livenessProbe:
+        timeoutSeconds: 60
+        periodSeconds: 60
+        initialDelaySeconds: 60
+    - readinessProbe:
+        timeoutSeconds: 60
+        periodSeconds: 60
+        initialDelaySeconds: 60
+    - config:
+        schema_config:
+          configs:
+          - from: 2021-10-05
+            store: boltdb-shipper
+            object_store: filesystem
+            schema: v11
+            index:
+              prefix: index_
+              period: 24h
+        # retention: https://grafana.com/docs/loki/latest/operations/storage/retention/#example-configuration
+        # https://grafana.com/docs/loki/latest/configuration/#period_config
+        # 28 days of history (672h)
+        chunk_store_config:
+          max_look_back_period: 672h
+        table_manager:
+          retention_deletes_enabled: true
+          retention_period: 672h
+        ingester:
+          lifecycler:
+            address: 127.0.0.1
+    - persistence:
+        enabled: true
+        accessModes:
+        - ReadWriteOnce
+        size: 10Gi
+    # TODO: re-enable when we actually start monitoring
+    - serviceMonitor:
+        enabled: false
+
+# https://github.com/grafana/helm-charts/tree/main/charts/promtail
+- name: promtail
+  chart: grafana/promtail
+  version: 3.8.1
+  namespace: monitoring
+  values:
+    - image:
+        registry: {{ .Values.DOCKER_IO }}
+        repository: grafana/promtail
+        tag: {{ .Values.PROMTAIL_TAG }}
+        pullPolicy: IfNotPresent
+    - initContainer:
+        enabled: true
+        image:
+          registry: "{{ .Values.DOCKER_IO }}"
+          repository: "busybox"
+          tag: "{{ .Values.BUSYBOX_TAG }}"
+        fsInotifyMaxUserInstances: 1024
+    - readinessProbe:
+      periodSeconds: 50
+      timeoutSeconds: 50
+    - config:
+        logLevel: info
+        serverPort: 3101
+        lokiAddress: http://loki:3100/loki/api/v1/push
+    # TODO: re-enable when we actually start monitoring
+    - serviceMonitor:
+        enabled: false

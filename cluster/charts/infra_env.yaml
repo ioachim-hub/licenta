@@ -1,0 +1,5 @@
+mongodb:
+  host: "mongodb"
+  port: 27017
+  user: "root"
+  password: "123456"

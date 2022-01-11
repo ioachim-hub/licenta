@@ -1,0 +1,16 @@
+{
+    "filters": [
+        {
+            "field": "subjectName",
+            "value": "AA"
+        },
+        {
+            "field": "Promotion",
+            "value": "2022"
+        },
+        {
+            "field": "Domain",
+            "value": "CALC"
+        }
+    ]
+}

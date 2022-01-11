@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=https://json.schemastore.org/helmfile.json
+
+helmDefaults:
+  timeout: 600
+  skipDeps: true
+  historyMax: 2
+
+missingFileHandler: Error
+
+environments:
+  default:
+    values:
+      - ../tags.yaml
+      - ../config.yaml
+      - ../infra_env.yaml
+
+repositories:
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+
+releases:
+  - name: mongodb
+    # chart: https://github.com/bitnami/charts/tree/master/bitnami/mongodb
+    # history:
+    # https://artifacthub.io/packages/helm/bitnami/mongodb/10.23.10
+    # https://charts.bitnami.com/bitnami/mongodb-10.23.10.tgz
+    chart: bitnami/mongodb
+    version: 10.28.7
+    values:
+    - image:
+        registry: "{{ .Values.DOCKER_IO }}"
+        repository: bitnami/mongodb
+        tag: "{{ .Values.MONGODB_TAG }}"
+        debug: true
+    - architecture: "standalone"
+    - useStatefulSet: true
+    - auth:
+        rootPassword: "123456"
+    - enableIPv6: true
+    - systemLogVerbosity: 0
+    - disableSystemLog: true
+    - persistence:
+        size: 8Gi
+    - volumePermissions:
+        enabled: true
+        image:
+          registry: "{{ .Values.DOCKER_IO }}"
+          repository: "bitnami/bitnami-shell"
+          tag: "{{ .Values.BITNAMI_SHELL_TAG }}"
+          pullPolicy: IfNotPresent
+    - terminationGracePeriodSeconds: 120
+    - livenessProbe:
+        enabled: true
+        timeoutSeconds: 55
+        periodSeconds: 60
+        failureThreshold: 3
+        successThreshold: 1
+    - readinessProbe:
+        enabled: true
+        timeoutSeconds: 55
+        periodSeconds: 60
+        failureThreshold: 3
+        successThreshold: 1
+    - metrics:
+        enabled: true
+        image:
+          registry: "{{ .Values.DOCKER_IO }}"
+          repository: "bitnami/mongodb-exporter"
+          tag: "{{ .Values.MONGODB_EXPORTER_TAG }}"
+        # TODO: re-enable when we actually start monitoring
+        serviceMonitor:
+          enabled: false
+        prometheusRule:
+          enabled: false

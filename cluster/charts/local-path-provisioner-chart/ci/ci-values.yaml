@@ -1,0 +1,2 @@
+storageClass:
+  name: local-path-provisioner
