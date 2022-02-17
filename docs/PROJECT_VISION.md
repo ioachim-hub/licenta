@@ -1,6 +1,6 @@
 # Project Vision
 
-## TITLU TEMA: Identificarea stirilor false folosind algoritmi de invatare automata
+## TITLU TEMA: Identificarea stirilor false(fake news) din retelele de socializare, folosind algoritmi de invatare automata
 
 Aici este o lista cu potentialele derivari ale proiectului de licenta, si in ce directii poate merge interpretarea titlului licentei:
 
@@ -18,7 +18,7 @@ Aici este o lista cu potentialele derivari ale proiectului de licenta, si in ce 
     - documentare deployment - rolul fiecarui microserviciu in sistem
 
 - realizarea generarii de stiri false folosind transformatori generativi - GPT-2
-- realizare scrapper date pentru site-uri limba romana
+- realizare scrapper date pentru site-uri limba romana (deoarece trebuie din retelele de socializare, aici va trebui exista o mica filtrare a url-irlor inainte)
     - dezvoltarea unor scripturi specifice fiecarui site in parte care sa poata face extragere de date de tipul FAKE sau TRUE NEWS
         - FAKE NEWS - [Times New Roman](https://www.timesnewroman.ro)
         - TRUE NEWS - [BIZIDAY](https://www.biziday.ro), Facebook: [guv.ro](https://www.facebook.com/guv.ro), [Ministerul Sănătăţii - România](https://www.facebook.com/MinisterulSanatatii) si altele
