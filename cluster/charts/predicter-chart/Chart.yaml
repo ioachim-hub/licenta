@@ -1,6 +1,7 @@
+---
 apiVersion: v2
 name: predicter-chart
 description: predicter
 
-version: "1.0.0"
-appVersion: "1.0.0"
+version: 1.0.0
+appVersion: 1.0.0
