@@ -1,4 +1,4 @@
-* 
+*
 * ==> Audit <==
 * |---------|--------------------------------------------------|----------|--------------|---------|-------------------------------|-------------------------------|
 | Command |                       Args                       | Profile  |     User     | Version |          Start Time           |           End Time            |
@@ -66,7 +66,7 @@
 |         | --driver=podman --cpus=max --memory=max          |          |              |         |                               |                               |
 |---------|--------------------------------------------------|----------|--------------|---------|-------------------------------|-------------------------------|
 
-* 
+*
 * ==> Last Start <==
 * Log file created at: 2021/12/01 10:18:36
 Running on machine: 192-168-0-106
@@ -96,11 +96,11 @@ spec: 1.0.0
 W1201 10:18:37.534045 1695222 oci.go:119] Your kernel does not support memory limit capabilities or the cgroup is not mounted.
 W1201 10:18:37.534068 1695222 out.go:241] ❗  Your cgroup does not allow setting memory.
 I1201 10:18:37.588744 1695222 out.go:176]     ▪ More information: https://docs.docker.com/engine/install/linux-postinstall/#your-kernel-does-not-support-cgroup-swap-limit-capabilities
-I1201 10:18:37.698699 1695222 out.go:176] 
+I1201 10:18:37.698699 1695222 out.go:176]
 W1201 10:18:37.698996 1695222 out.go:241] 🧯  The requested memory allocation of 15417MiB does not leave room for system overhead (total system memory: 15417MiB). You may face stability issues.
 W1201 10:18:37.699597 1695222 out.go:241] 💡  Suggestion: Start minikube with less memory allocated: 'minikube start --memory=3800mb'
-I1201 10:18:37.863640 1695222 out.go:176] 
-I1201 10:18:37.864069 1695222 start_flags.go:268] no existing cluster config was found, will generate one from the flags 
+I1201 10:18:37.863640 1695222 out.go:176]
+I1201 10:18:37.864069 1695222 start_flags.go:268] no existing cluster config was found, will generate one from the flags
 I1201 10:18:37.864393 1695222 start_flags.go:736] Wait components to verify : map[apiserver:true system_pods:true]
 I1201 10:18:37.864421 1695222 cni.go:93] Creating CNI manager for ""
 I1201 10:18:37.864438 1695222 cni.go:167] CNI unnecessary in this configuration, recommending no CNI
@@ -151,7 +151,7 @@ I1201 10:18:38.646654 1695222 network_create.go:259] output of [sudo -n podman n
 []
 
 -- /stdout --
-** stderr ** 
+** stderr **
 Error: error inspecting object: no such network minikube
 
 ** /stderr **
@@ -213,11 +213,11 @@ I1201 10:20:17.427942 1695222 main.go:130] libmachine: About to run SSH command:
 		if ! grep -xq '.*\sminikube' /etc/hosts; then
 			if grep -xq '127.0.1.1\s.*' /etc/hosts; then
 				sudo sed -i 's/^127.0.1.1\s.*/127.0.1.1 minikube/g' /etc/hosts;
-			else 
-				echo '127.0.1.1 minikube' | sudo tee -a /etc/hosts; 
+			else
+				echo '127.0.1.1 minikube' | sudo tee -a /etc/hosts;
 			fi
 		fi
-I1201 10:20:17.540977 1695222 main.go:130] libmachine: SSH cmd err, output: <nil>: 
+I1201 10:20:17.540977 1695222 main.go:130] libmachine: SSH cmd err, output: <nil>:
 I1201 10:20:17.541001 1695222 ubuntu.go:175] set auth options {CertDir:/home/ioachimlihor/.minikube CaCertPath:/home/ioachimlihor/.minikube/certs/ca.pem CaPrivateKeyPath:/home/ioachimlihor/.minikube/certs/ca-key.pem CaCertRemotePath:/etc/docker/ca.pem ServerCertPath:/home/ioachimlihor/.minikube/machines/server.pem ServerKeyPath:/home/ioachimlihor/.minikube/machines/server-key.pem ClientKeyPath:/home/ioachimlihor/.minikube/certs/key.pem ServerCertRemotePath:/etc/docker/server.pem ServerKeyRemotePath:/etc/docker/server-key.pem ClientCertPath:/home/ioachimlihor/.minikube/certs/cert.pem ServerCertSANs:[] StorePath:/home/ioachimlihor/.minikube}
 I1201 10:20:17.541027 1695222 ubuntu.go:177] setting up certificates
 I1201 10:20:17.541046 1695222 provision.go:83] configureAuth start
@@ -287,7 +287,7 @@ Restart=on-failure
 # NOTE: default-ulimit=nofile is set to an arbitrary number for consistency with other
 # container runtimes. If left unlimited, it may result in OOM issues with MySQL.
 ExecStart=
-ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2376 -H unix:///var/run/docker.sock --default-ulimit=nofile=1048576:1048576 --tlsverify --tlscacert /etc/docker/ca.pem --tlscert /etc/docker/server.pem --tlskey /etc/docker/server-key.pem --label provider=podman --insecure-registry 10.96.0.0/12 --insecure-registry srp.aa.minikube.com:5000 --default-ulimit=nofile=102400:102400 
+ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2376 -H unix:///var/run/docker.sock --default-ulimit=nofile=1048576:1048576 --tlsverify --tlscacert /etc/docker/ca.pem --tlscert /etc/docker/server.pem --tlskey /etc/docker/server-key.pem --label provider=podman --insecure-registry 10.96.0.0/12 --insecure-registry srp.aa.minikube.com:5000 --default-ulimit=nofile=102400:102400
 ExecReload=/bin/kill -s HUP \$MAINPID
 
 # Having non-zero Limit*s causes performance problems due to accounting overhead
@@ -337,7 +337,7 @@ Restart=on-failure
 # NOTE: default-ulimit=nofile is set to an arbitrary number for consistency with other
 # container runtimes. If left unlimited, it may result in OOM issues with MySQL.
 ExecStart=
-ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2376 -H unix:///var/run/docker.sock --default-ulimit=nofile=1048576:1048576 --tlsverify --tlscacert /etc/docker/ca.pem --tlscert /etc/docker/server.pem --tlskey /etc/docker/server-key.pem --label provider=podman --insecure-registry 10.96.0.0/12 --insecure-registry srp.aa.minikube.com:5000 --default-ulimit=nofile=102400:102400 
+ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2376 -H unix:///var/run/docker.sock --default-ulimit=nofile=1048576:1048576 --tlsverify --tlscacert /etc/docker/ca.pem --tlscert /etc/docker/server.pem --tlskey /etc/docker/server-key.pem --label provider=podman --insecure-registry 10.96.0.0/12 --insecure-registry srp.aa.minikube.com:5000 --default-ulimit=nofile=102400:102400
 ExecReload=/bin/kill -s HUP $MAINPID
 
 # Having non-zero Limit*s causes performance problems due to accounting overhead
@@ -379,7 +379,7 @@ I1201 10:20:27.162145 1695222 main.go:130] libmachine: SSH cmd err, output: <nil
 +Requires=docker.socket
 +StartLimitBurst=3
 +StartLimitIntervalSec=60
- 
+
  [Service]
  Type=notify
 -# the default is not to use systemd for cgroups because the delegate issues still
@@ -396,7 +396,7 @@ I1201 10:20:27.162145 1695222 main.go:130] libmachine: SSH cmd err, output: <nil
 -# to make them work for either version of systemd.
 -StartLimitBurst=3
 +Restart=on-failure
- 
+
 -# Note that StartLimitInterval was renamed to StartLimitIntervalSec in systemd 230.
 -# Both the old, and new name are accepted by systemd 230 and up, so using the old name to make
 -# this option work for either version of systemd.
@@ -414,29 +414,29 @@ I1201 10:20:27.162145 1695222 main.go:130] libmachine: SSH cmd err, output: <nil
 +# NOTE: default-ulimit=nofile is set to an arbitrary number for consistency with other
 +# container runtimes. If left unlimited, it may result in OOM issues with MySQL.
 +ExecStart=
-+ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2376 -H unix:///var/run/docker.sock --default-ulimit=nofile=1048576:1048576 --tlsverify --tlscacert /etc/docker/ca.pem --tlscert /etc/docker/server.pem --tlskey /etc/docker/server-key.pem --label provider=podman --insecure-registry 10.96.0.0/12 --insecure-registry srp.aa.minikube.com:5000 --default-ulimit=nofile=102400:102400 
++ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2376 -H unix:///var/run/docker.sock --default-ulimit=nofile=1048576:1048576 --tlsverify --tlscacert /etc/docker/ca.pem --tlscert /etc/docker/server.pem --tlskey /etc/docker/server-key.pem --label provider=podman --insecure-registry 10.96.0.0/12 --insecure-registry srp.aa.minikube.com:5000 --default-ulimit=nofile=102400:102400
 +ExecReload=/bin/kill -s HUP $MAINPID
- 
+
  # Having non-zero Limit*s causes performance problems due to accounting overhead
  # in the kernel. We recommend using cgroups to do container-local accounting.
 @@ -32,16 +34,16 @@
  LimitNPROC=infinity
  LimitCORE=infinity
- 
+
 -# Comment TasksMax if your systemd version does not support it.
 -# Only systemd 226 and above support this option.
 +# Uncomment TasksMax if your systemd version supports it.
 +# Only systemd 226 and above support this version.
  TasksMax=infinity
 +TimeoutStartSec=0
- 
+
  # set delegate yes so that systemd does not reset the cgroups of docker containers
  Delegate=yes
- 
+
  # kill only the docker process, not all processes in the cgroup
  KillMode=process
 -OOMScoreAdjust=-500
- 
+
  [Install]
  WantedBy=multi-user.target
 Synchronizing state of docker.service with SysV service script with /lib/systemd/systemd-sysv-install.
@@ -505,7 +505,7 @@ I1201 10:20:32.284157 1695222 out.go:203] 🐳  Preparing Kubernetes v1.20.10 on
 I1201 10:20:33.632497 1695222 out.go:176]     ▪ opt default-ulimit=nofile=102400:102400
 I1201 10:20:33.632778 1695222 cli_runner.go:115] Run: sudo -n podman container inspect --format {{.NetworkSettings.Gateway}} minikube
 I1201 10:20:33.808844 1695222 cli_runner.go:115] Run: sudo -n podman container inspect --format "
-{{ if index .NetworkSettings.Networks "minikube"}} 
+{{ if index .NetworkSettings.Networks "minikube"}}
 	{{(index .NetworkSettings.Networks "minikube").Gateway}}
 {{ end }}
 " minikube
@@ -778,9 +778,9 @@ I1201 10:22:23.437206 1695222 ssh_runner.go:192] Completed: sudo KUBECONFIG=/var
 I1201 10:22:23.771821 1695222 out.go:176] 🌟  Enabled addons: storage-provisioner, default-storageclass
 I1201 10:22:23.771878 1695222 addons.go:417] enableAddons completed in 14.745179256s
 I1201 10:22:23.854807 1695222 start.go:473] kubectl: 1.22.4, cluster: 1.20.10 (minor skew: 2)
-I1201 10:22:24.002770 1695222 out.go:176] 
+I1201 10:22:24.002770 1695222 out.go:176]
 W1201 10:22:24.003210 1695222 out.go:241] ❗  /usr/bin/kubectl is version 1.22.4, which may have incompatibilites with Kubernetes 1.20.10.
 I1201 10:22:24.151667 1695222 out.go:176]     ▪ Want kubectl v1.20.10? Try 'minikube kubectl -- get pods -A'
 I1201 10:22:24.357863 1695222 out.go:176] 🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
 
-* 
+*

@@ -1,17 +1,18 @@
+---
 name: predicter
 
 image:
-  name: "predicter"
-  tag: "1.0.0"
-  pullPolicy: "Always"
+    name: predicter
+    tag: 1.0.0
+    pullPolicy: Always
 
 ingress:
-  enabled: false
-  hostname: restapi.aa.minikube.com
+    enabled: false
+    hostname: restapi.aa.minikube.com
 
 service:
-  port: 80
+    port: 80
 
 nodeSelector:
-  enabled: false
-  hostname: "machine-hostname"
+    enabled: false
+    hostname: machine-hostname

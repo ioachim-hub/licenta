@@ -71,7 +71,7 @@ releases:
           value: "dark"
         - name: GF_USERS_USER_INVITE_MAX_LIFETIME_DURATION
           value: "4w"
-          
+
   - name: predicter
     chart: ../predicter-chart
     namespace: default
