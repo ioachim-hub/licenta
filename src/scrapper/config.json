@@ -3,8 +3,8 @@
     "routes": [
         "politic/",
         "sport/",
-        "monden/",
         "social/",
-        "it-stiinta/"
+        "it-stiinta/",
+        "monden/"
     ]
 }
