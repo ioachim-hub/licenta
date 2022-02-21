@@ -4,7 +4,6 @@ licenta
 Licenta NLP and Server-Web product
 
 Project Organization
-
 ------------
 
     ├── LICENSE
