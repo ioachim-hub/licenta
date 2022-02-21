@@ -1,6 +1,5 @@
 import time
 
-
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
@@ -8,8 +7,8 @@ from selenium.webdriver.support import expected_conditions
 
 from requests_html import HTMLSession
 
-from src.scrapper.model import SiteData, Domain
-from src.scrapper.common import site_config, get_driver, dump_model
+from code.scrapper.model import SiteData, Domain
+from code.scrapper.common import site_config, get_driver, dump_model
 
 
 total_index: int = 0

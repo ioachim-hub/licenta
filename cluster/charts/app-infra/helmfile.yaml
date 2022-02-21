@@ -22,10 +22,10 @@ releases:
   - name: mongodb
     # chart: https://github.com/bitnami/charts/tree/master/bitnami/mongodb
     # history:
-    # https://artifacthub.io/packages/helm/bitnami/mongodb/10.23.10
-    # https://charts.bitnami.com/bitnami/mongodb-10.23.10.tgz
+    # https://artifacthub.io/packages/helm/bitnami/mongodb/11.0.3
+    # https://charts.bitnami.com/bitnami/mongodb-11.0.3.tgz
     chart: bitnami/mongodb
-    version: 10.28.7
+    version: 11.0.3
     values:
     - image:
         registry: "{{ .Values.DOCKER_IO }}"
@@ -67,8 +67,41 @@ releases:
           registry: "{{ .Values.DOCKER_IO }}"
           repository: "bitnami/mongodb-exporter"
           tag: "{{ .Values.MONGODB_EXPORTER_TAG }}"
-        # TODO: re-enable when we actually start monitoring
         serviceMonitor:
           enabled: false
         prometheusRule:
           enabled: false
+  - name: rabbitmq
+    # chart: https://github.com/bitnami/charts/tree/master/bitnami/rabbitmq
+    # history: https://github.com/bitnami/charts/commits/master/bitnami/rabbitmq
+    # https://artifacthub.io/packages/helm/bitnami/rabbitmq/8.29.0
+    # https://charts.bitnami.com/bitnami/rabbitmq-8.29.0.tgz
+    chart: bitnami/rabbitmq
+    version: 8.29.0
+    values:
+    - image:
+        registry: {{ .Values.DOCKER_IO }}
+        repository: "bitnami/rabbitmq"
+        tag: {{ .Values.RABBITMQ_TAG }}
+        debug: true
+        pullPolicy: IfNotPresent
+    - auth:
+        username: admin
+        password: 3oUb5ZlIIm
+    - replicaCount: 1
+    - persistence:
+        enabled: true
+        accessMode: ReadWriteOnce
+    - service:
+        port: 5672
+        portName: amqp
+    - volumePermissions:
+        enabled: true
+        image:
+          registry: {{ .Values.DOCKER_IO }}
+          repository: "bitnami/bitnami-shell"
+          tag: {{ .Values.BITNAMI_SHELL_TAG }}
+    - ingress:
+        enabled: true
+        path: "/"
+        hostname: "rabbitmq"

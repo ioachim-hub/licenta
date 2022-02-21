@@ -1,4 +1,4 @@
-from typing import Tuple, Any
+from typing import Tuple
 import pymongo
 import pymongo.database
 

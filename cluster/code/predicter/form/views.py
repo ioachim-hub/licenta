@@ -1,11 +1,9 @@
 import random
 
-import django.http
-import django.shortcuts
-import django.views.decorators.csrf
+import django
 
 from form.form import ArticleForm, MONGODB_NEWS_COLLECTION_NAME, mongoForm
-from utils import get_db_handle, dbHandler
+from utils import dbHandler
 
 
 def index(request: django.http.HttpRequest):
@@ -40,7 +38,7 @@ def upload(request: django.http.HttpRequest):
 
             try:
                 collection.insert_one(entry.dict())
-            except Exception as e:
+            except Exception:
                 return django.http.HttpResponseBadRequest("Stirea este falsa")
 
             if label == 1:
