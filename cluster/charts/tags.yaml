@@ -36,6 +36,3 @@ GRAFANA_TAG: 8.2.3
 # grafana logging stack
 PROMTAIL_TAG: 2.3.0
 LOKI_TAG: 2.3.0
-
-# rabbitmq
-RABBITMQ_TAG: 3.9.13-debian-10-r31

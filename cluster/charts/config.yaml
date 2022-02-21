@@ -14,5 +14,5 @@ SMTP_FROM_ADDRESS: "ioachim.lihor@gmail.com"
 tcpforwards:
   "27017": "default/mongodb:27017"
   "9093": "default/prometheus-alertmanager:9093"
-  "5672": "default/rabbitmq:5672"
-  "6379": "default/redis-headless:6379"
+
+GRAFANA_NODE: null
