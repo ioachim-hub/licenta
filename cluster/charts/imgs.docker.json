@@ -10,7 +10,7 @@
         "repo": "docker.io",
         "name": "grafana/grafana",
         "tag": [
-            "8.2.3"
+            "8.4.1"
         ]
     },
     {
@@ -119,6 +119,13 @@
         ]
     },
     {
+        "repo": "docker.io",
+        "name": "bitnami/rabbitmq",
+        "tag": [
+            "3.9.13-debian-10-r31"
+        ]
+    },
+    {
         "name": "predicter",
         "tag": [
             "1.0.0"
@@ -128,5 +135,34 @@
             "dockerfile": "docker/predicter/Dockerfile",
             "context": "./"
         }
+    },
+    {
+        "name": "celery-beat",
+        "tag": [
+            "1.0.0"
+        ],
+        "force": true,
+        "build": {
+            "dockerfile": "docker/celery-beat/Dockerfile",
+            "context": "./"
+        }
+    },
+    {
+        "name": "celery-scrapper",
+        "tag": [
+            "1.0.0"
+        ],
+        "force": true,
+        "build": {
+            "dockerfile": "docker/celery-scrapper/Dockerfile",
+            "context": "./"
+        }
+    },
+    {
+        "repo": "docker.io",
+        "name": "bitnami/redis",
+        "tag": [
+            "6.2.6-debian-10-r120"
+        ]
     }
 ]

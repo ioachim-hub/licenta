@@ -1,6 +1,28 @@
 ---
 mongodb:
-    host: mongodb
-    port: 27017
-    user: root
-    password: '123456'
+  host: mongodb
+  port: 27017
+  username: root
+  password: "ikkgIzSjBW"
+
+celery:
+  broker_url: "amqp://admin:3oUb5ZlIIm@rabbitmq:5672//"
+  expires_multiplier: 1.5
+  task_ignore_result: true
+  task_store_errors_even_if_ignored: true
+  task_track_started: false
+  result_extended: false
+  broker_pool_limit: 256
+
+redis:
+  host: "redis-master"
+  port: 6379
+
+site:
+  - url: "https://www.timesnewroman.ro/"
+    routes:
+      - "politic/"
+      - "sport/"
+      - "social/"
+      - "it-stiinta/"
+      - "monden/"

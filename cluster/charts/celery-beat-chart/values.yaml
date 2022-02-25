@@ -1,0 +1,24 @@
+name: celery-beat
+
+image:
+  name: "celery-beat"
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+
+app:
+  loglevel: DEBUG
+
+config:
+  celery: {}
+  mongodb: {}
+  site: {}
+
+resources:
+  limits: {}
+  requests: {}
+  # limits:
+  #   cpu: 1000m
+  #   memory: 4Gi
+  # requests:
+  #   cpu: 500m
+  #   memory: 2Gi
