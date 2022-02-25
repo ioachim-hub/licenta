@@ -23,7 +23,7 @@ class Entry(pydantic.BaseModel):
     Files referenced by Config must contain a list of these entries
     Example entry which we need to build:
     {
-      "name": "radcom/grafana-init",
+      "name": "grafana-init",
       "tag": ["1.0.0"],
       "force": true,
       "build": {

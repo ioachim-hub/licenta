@@ -1,3 +1,4 @@
+---
 # yaml-language-server: $schema=https://json.schemastore.org/helmfile.json
 
 helmDefaults:
@@ -18,6 +19,7 @@ repositories:
   - name: bitnami
     url: https://charts.bitnami.com/bitnami
 
+---
 releases:
   - name: grafana
     chart: bitnami/grafana
@@ -47,30 +49,16 @@ releases:
           value: "console"
         - name: GF_LOG_LEVEL
           value: "debug"
-        - name: GF_LOG_FILTERS
-          value: "alerting.scheduler:info"
         - name: GF_SMTP_ENABLED
           value: "true"
         - name: GF_SMTP_HOST
           value: "email-smtp:25"
         - name: GF_SMTP_FROM_ADDRESS
           value: "{{ .Values.SMTP_FROM_ADDRESS }}"
-        - name: GF_SMTP_EHLO_IDENTITY
-          value: "localhost"
-        - name: GF_SMTP_STARTTLS_POLICY
-          value: "NoStartTLS"
-        - name: GF_ANALYTICS_REPORTING_ENABLED
-          value: "false"
-        - name: GF_ANALYTICS_CHECK_FOR_UPDATES
-          value: "false"
         - name: GF_SECURITY_ADMIN_PASSWORD
           value: "admin"
-        - name: GF_SECURITY_DISABLE_GRAVATAR
-          value: "true"
         - name: GF_USERS_DEFAULT_THEME
           value: "dark"
-        - name: GF_USERS_USER_INVITE_MAX_LIFETIME_DURATION
-          value: "4w"
 
   - name: predicter
     chart: ../predicter-chart
@@ -83,3 +71,30 @@ releases:
     - ingress:
         enabled: true
         hostname: {{ tpl "predicter.aa.{{ $.Values.environment_name }}.com" . }}
+
+  - name: celery-beat
+    chart: ../celery-beat-chart
+    namespace: default
+    values:
+    - image:
+        name: "{{ .Values.minikube }}/celery-beat"
+        tag: "1.0.0"
+        pullPolicy: Always
+    - config:
+        celery: {{- toYaml $.Values.celery | nindent 10 }}
+        mongodb: {{- toYaml $.Values.mongodb | nindent 10 }}
+        site: {{- toYaml $.Values.site | nindent 10 }}
+
+
+  - name: celery-scrapper
+    chart: ../celery-scrapper-chart
+    namespace: default
+    values:
+    - image:
+        name: "{{ .Values.minikube }}/celery-scrapper"
+        tag: "1.0.0"
+        pullPolicy: Always
+    - config:
+        celery: {{- toYaml $.Values.celery | nindent 10 }}
+        mongodb: {{- toYaml $.Values.mongodb | nindent 10 }}
+        redis: {{- toYaml $.Values.redis | nindent 10 }}

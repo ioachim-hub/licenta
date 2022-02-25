@@ -2,10 +2,10 @@ FROM docker.io/bitnami/python:3.9.8-debian-10-r1
 
 USER root
 
-COPY ./code/predicter /opt/predicter
+COPY ./licenta_code/predicter /opt/predicter
 RUN chmod 777 /opt/predicter
 
-COPY requirements.txt /tmp/requirements.txt
+COPY requirements-django.txt /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.txt
 
 COPY ./docker/predicter/docker-entrypoint.sh /opt/docker-entrypoint.sh

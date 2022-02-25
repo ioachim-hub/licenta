@@ -1,3 +1,4 @@
+---
 # yaml-language-server: $schema=https://json.schemastore.org/helmfile.json
 
 helmDefaults:
@@ -21,7 +22,7 @@ repositories:
   - name: grafana
     url: https://grafana.github.io/helm-charts
 
-
+---
 releases:
   # https://github.com/ebrianne/helm-charts/tree/master/charts/local-path-provisioner
 - name: local-path-provisioner
