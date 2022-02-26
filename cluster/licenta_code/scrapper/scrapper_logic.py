@@ -17,7 +17,9 @@ total_index: int = 0
 driver = get_driver()
 
 
-def scrapper_logic(url: str, route: str, page: int) -> list[Entry]:
+def scrapper_logic(
+    url: str, route: str, page: int, date_date: pd.Timestamp
+) -> list[Entry]:
     entries: list[Entry] = []
     print(f"scrapping from: {url}{route}page/{page})")
 
@@ -47,14 +49,16 @@ def scrapper_logic(url: str, route: str, page: int) -> list[Entry]:
         for paragraph in data.html.find('div[class^="content-container"] > p'):
             if "class" not in paragraph.attrs:
                 content += paragraph.text.encode("utf-8").decode()
-
+        date_entry = pd.to_datetime(convert_date(date), format="%d %m %Y")
+        if date_entry == date_date:
+            continue
         entries.append(
             Entry(
                 site=url,
                 domain=route,
                 title=title,
                 content=content,
-                date=pd.to_datetime(convert_date(date), format="%d %m %Y"),
+                date=date_entry,
             )
         )
 

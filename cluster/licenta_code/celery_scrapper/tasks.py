@@ -87,12 +87,12 @@ def binary_search(low: int, high: int, date: pd.Timestamp, path: str):
 def find_page_by_date(url: str, route: str, date: pd.Timestamp) -> int:
     last_page = find_last_page(url, route)
     page = binary_search(1, last_page, date, url + route)
-    return page - 1  # the next page after the current one
+    return page  # the next page after the current one
 
 
 def find_start_page(url: str, route: str) -> int:
     last_page = find_last_page(url, route)
-    entry: Entry = None
+    entry: Entry
     collection = worker_state.mongodb_db[MONGODB_SCRAPPED_COLLECTION_NAME]
     for e in collection.find({"site": url, "domain": route}).sort("date", -1):
         entry = Entry.parse_obj(e)
@@ -105,9 +105,15 @@ def find_start_page(url: str, route: str) -> int:
 
 def scrapper(url: str, route: str) -> None:
     start_page = find_start_page(url, route)
+    if start_page == -1:
+        pass
+    entry: Entry
     collection = worker_state.mongodb_db[MONGODB_SCRAPPED_COLLECTION_NAME]
+    for e in collection.find({"site": url, "domain": route}).sort("date", -1):
+        entry = Entry.parse_obj(e)
+        break
     for page in range(start_page, -1, -1):
-        entries = scrapper_logic(url, route, page)
+        entries = scrapper_logic(url, route, page, entry.date)
         collection.insert_many([entry.dict() for entry in entries])
 
 
