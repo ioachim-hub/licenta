@@ -15,4 +15,3 @@ tcpforwards:
   "9093": "default/prometheus-alertmanager:9093"
   "5672": "default/rabbitmq:5672"
   "6379": "default/redis-headless:6379"
-  "80": "default/celery-scrapper:80"

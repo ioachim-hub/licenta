@@ -23,7 +23,7 @@ def setup_periodic_tasks(
     logging.info("populating scheduler...")
     for site in cfg.site:
         for route in site.routes:
-            day_freq_sec = 1
+            day_freq_sec = 300
             ts_freq_sec = 3600
 
             expires = int(ts_freq_sec * cfg.celery.expires_multiplier)
