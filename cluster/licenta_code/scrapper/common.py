@@ -20,7 +20,7 @@ def driver_config() -> Options:
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    chrome_prefs = {}
+    chrome_prefs: dict[str, dict[str, int]] = {}
     options.experimental_options["prefs"] = chrome_prefs
     chrome_prefs["profile.default_content_settings"] = {"images": 2}
     return options
@@ -28,9 +28,9 @@ def driver_config() -> Options:
 
 def get_driver() -> webdriver.Chrome:
     options = driver_config()
-    # driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=options)
-    driver = webdriver.Chrome(options=options)
-
+    driver = webdriver.Chrome(
+        executable_path=ChromeDriverManager().install(), options=options
+    )
     return driver
 
 

@@ -71,6 +71,8 @@ RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`cu
 # Unzip the Chrome Driver into /usr/local/bin directory
 RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
 
+RUN chmod 777 /root/
+
 # Set display port as an environment variable
 ENV DISPLAY=:99
 
