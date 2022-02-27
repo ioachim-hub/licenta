@@ -54,7 +54,7 @@ def find_last_page(url: str, route: str) -> int:
 
 # https://www.geeksforgeeks.org/python-program-for-binary-search/
 # this code is modeled to serve the scope
-def binary_search(low: int, high: int, date: pd.Timestamp, path: str):
+def binary_search(low: int, high: int, date: pd.Timestamp, path: str) -> int:
     if high >= low:
         mid = (high + low) // 2
 
@@ -112,8 +112,10 @@ def scrapper(url: str, route: str) -> None:
     for e in collection.find({"site": url, "domain": route}).sort("date", -1):
         entry = Entry.parse_obj(e)
         break
-    for page in range(start_page, -1, -1):
+    for page in range(start_page, 0, -1):
         entries = scrapper_logic(url, route, page, entry.date)
+        if entries == []:
+            continue
         collection.insert_many([entry.dict() for entry in entries])
 
 

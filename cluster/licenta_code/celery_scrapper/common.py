@@ -15,6 +15,6 @@ class Config(pydantic.BaseModel):
 def get_cfg(file_path: str = None) -> Config:
     settings_path = get_settings_path(file_path)
 
-    cfg = Config.parse_file(settings_path)
+    cfg: Config = Config.parse_file(settings_path)
 
     return cfg
