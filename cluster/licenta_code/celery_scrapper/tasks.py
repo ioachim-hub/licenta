@@ -87,7 +87,7 @@ def binary_search(low: int, high: int, date: pd.Timestamp, path: str):
 def find_page_by_date(url: str, route: str, date: pd.Timestamp) -> int:
     last_page = find_last_page(url, route)
     page = binary_search(1, last_page, date, url + route)
-    return page  # the next page after the current one
+    return page
 
 
 def find_start_page(url: str, route: str) -> int:
