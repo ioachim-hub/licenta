@@ -6,7 +6,7 @@ from celery.signals import worker_process_init
 from celery.utils.dispatch.signal import Signal
 from celery.utils.log import get_task_logger
 
-from licenta_code.celery.common import CELERY_SCRAPP_TASK
+from licenta_code.celery.common import CELERY_SCRAPP_TASK, CELERY_SEARCH_TASK
 
 from licenta_code.celery_scrapper.celery_app import app
 from licenta_code.celery_scrapper.celery_worker import WorkerState
@@ -119,6 +119,10 @@ def scrapper(url: str, route: str) -> None:
         collection.insert_many([entry.dict() for entry in entries])
 
 
+def search(url: str, route: str) -> None:
+    pass
+
+
 @app.task(
     bind=True,
     name=CELERY_SCRAPP_TASK,
@@ -132,6 +136,39 @@ def celery_scrapper(
     **kwargs: Any,
 ) -> None:
     pre_str = f"celery scrapper (url, route): ({url}, {route})"
+    logger.info(pre_str)
+
+    global worker_state
+
+    lock_name = url + route
+    have_lock = False
+    lock = worker_state.redis_client.lock(
+        name=lock_name, timeout=scrapping_lock_time_limit
+    )
+    try:
+        have_lock = lock.acquire(blocking=False)
+        if have_lock:
+            scrapper(url=url, route=route)
+        else:
+            logger.info(f"{pre_str}: lock taken")
+    finally:
+        if have_lock:
+            lock.release()
+
+
+@app.task(
+    bind=True,
+    name=CELERY_SEARCH_TASK,
+    time_limit=scrapping_hard_time_limit,
+    soft_time_limit=scrapping_soft_time_limit,
+)
+def celery_link_searcher_scrapper(
+    self: celery.Task,
+    url: str,
+    route: str,
+    **kwargs: Any,
+) -> None:
+    pre_str = f"celery search (url, route): ({url}, {route})"
     logger.info(pre_str)
 
     global worker_state

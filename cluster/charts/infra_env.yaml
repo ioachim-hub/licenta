@@ -26,3 +26,5 @@ site:
       - "life-death/"
       - "it-stiinta/"
       - "monden/"
+  - url: "https://www.biziday.ro/"
+    routes: []

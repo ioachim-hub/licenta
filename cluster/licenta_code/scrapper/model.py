@@ -20,6 +20,7 @@ class SiteData(pydantic.BaseModel):
 class Entry(pydantic.BaseModel):
     site: str
     domain: str
+    link: str
     title: str
     content: str
     date: pd.Timestamp
