@@ -50,7 +50,7 @@ def scrapper_logic(
             if "class" not in paragraph.attrs:
                 content += paragraph.text.encode("utf-8").decode()
         date_entry = pd.to_datetime(convert_date(date), format="%d %m %Y")
-        if date_entry == date_date:
+        if date_entry <= date_date:
             continue
         entries.append(
             Entry(

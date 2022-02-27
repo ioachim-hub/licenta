@@ -10,7 +10,7 @@ from licenta_code.scrapper.model import SiteConfig, SiteData
 
 def site_config(path: str) -> SiteConfig:
     in_file = open(path, "r")
-    site = SiteConfig.parse_obj(json.load(in_file))
+    site: SiteConfig = SiteConfig.parse_obj(json.load(in_file))
     return site
 
 
