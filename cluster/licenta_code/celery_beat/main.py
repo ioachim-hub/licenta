@@ -23,10 +23,10 @@ def setup_periodic_tasks(
     logging.info("populating scheduler...")
     for site in cfg.site:
         for route in site.routes:
-            day_freq_sec = 300
-            ts_freq_sec = 3600
+            day_freq_sec = 3600
+            freq_sec = 3600
 
-            expires = int(ts_freq_sec * cfg.celery.expires_multiplier)
+            expires = int(freq_sec * cfg.celery.expires_multiplier)
             req = celery.signature(
                 CELERY_SCRAPP_TASK,
                 kwargs=dict(url=site.url, route=route),

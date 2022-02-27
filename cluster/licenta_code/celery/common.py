@@ -5,6 +5,7 @@ import pydantic
 
 CELERY_SCRAPP_QUEUE = "scrapp"
 CELERY_SCRAPP_TASK = "scrapp"
+CELERY_SEARCH_TASK = "search"
 
 
 class CeleryConfig(pydantic.BaseModel):

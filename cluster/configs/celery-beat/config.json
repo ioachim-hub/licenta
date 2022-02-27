@@ -23,6 +23,10 @@
                 "it-stiinta/",
                 "monden/"
             ]
+        },
+        {
+            "url": "https://www.biziday.ro/",
+            "routes": []
         }
     ]
 }
