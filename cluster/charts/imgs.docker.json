@@ -126,6 +126,13 @@
         ]
     },
     {
+        "repo": "docker.io",
+        "name": "bitnami/redis",
+        "tag": [
+            "6.2.6-debian-10-r120"
+        ]
+    },
+    {
         "name": "predicter",
         "tag": [
             "1.0.0"
@@ -157,12 +164,5 @@
             "dockerfile": "docker/celery-scrapper/Dockerfile",
             "context": "./"
         }
-    },
-    {
-        "repo": "docker.io",
-        "name": "bitnami/redis",
-        "tag": [
-            "6.2.6-debian-10-r120"
-        ]
     }
 ]
