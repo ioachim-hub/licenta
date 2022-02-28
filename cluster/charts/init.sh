@@ -12,10 +12,10 @@ minikube start \
 --install-addons=false \
 --insecure-registry=srp.minikube.com:5000 \
 --vm-driver=virtualbox \
---driver=docker \
+--driver=podman \
 --cpus=max \
---memory=max \
---force
+--memory=max
+
 minikube ssh 'docker run -d -p 5000:5000 --restart=always --name registry docker.io/registry:2'
 
 sudo sed -i '/minikube.com/d' /etc/hosts

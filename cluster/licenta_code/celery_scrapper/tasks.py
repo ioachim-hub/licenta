@@ -5,9 +5,8 @@ import celery
 from celery.signals import worker_process_init
 from celery.utils.dispatch.signal import Signal
 from celery.utils.log import get_task_logger
-from cluster.licenta_code.scrapper.search_logic import search_logic
 
-from licenta_code.celery.common import CELERY_SCRAPP_TASK, CELERY_SEARCH_TASK
+from licenta_code.celery.common import CELERY_RSS_TASK, CELERY_SCRAPP_TASK, CELERY_SEARCH_TASK
 
 from licenta_code.celery_scrapper.celery_app import app
 from licenta_code.celery_scrapper.celery_worker import WorkerState
@@ -21,6 +20,9 @@ from licenta_code.scrapper.model import Entry
 from licenta_code.scrapper.common import get_driver
 
 from licenta_code.scrapper.scrapper_logic import scrapper_logic
+from licenta_code.scrapper.search_logic import search_logic
+from licenta_code.scrapper.rss_logic import rss_logic
+
 from licenta_code.scrapper.common import convert_date
 
 logger = get_task_logger(__name__)
@@ -73,8 +75,7 @@ def binary_search(low: int, high: int, date: pd.Timestamp, path: str) -> int:
         for idx in range(len(articles)):
             elems_dates = articles[idx].find_elements_by_class_name("date")
             new_dates = [
-                pd.to_datetime(convert_date(el.text), format="%d %m %Y")
-                for el in elems_dates
+                pd.to_datetime(convert_date(el.text), format="%d %m %Y") for el in elems_dates
             ]
             dates.extend(new_dates)
         dates.sort()
@@ -140,6 +141,19 @@ def search(url: str) -> None:
             collection.insert_many([entry.dict() for entry in entries])
 
 
+def rss(url: str) -> None:
+    collection = worker_state.mongodb_db[MONGODB_SCRAPPED_COLLECTION_NAME]
+
+    entries_db: list[Entry] = []
+
+    for e in collection.find({"site": url}):
+        entries_db.append(Entry.parse_obj(e))
+
+    entries = rss_logic(url=url, existing_entries=entries_db)
+    if len(entries) != 0:
+        collection.insert_many([entry.dict() for entry in entries])
+
+
 @app.task(
     bind=True,
     name=CELERY_SCRAPP_TASK,
@@ -159,9 +173,7 @@ def celery_scrapper(
 
     lock_name = url + route
     have_lock = False
-    lock = worker_state.redis_client.lock(
-        name=lock_name, timeout=scrapping_lock_time_limit
-    )
+    lock = worker_state.redis_client.lock(name=lock_name, timeout=scrapping_lock_time_limit)
     try:
         have_lock = lock.acquire(blocking=False)
         if have_lock:
@@ -191,15 +203,43 @@ def celery_link_searcher_scrapper(
 
     lock_name = url
     have_lock = False
-    lock = worker_state.redis_client.lock(
-        name=lock_name, timeout=scrapping_lock_time_limit
-    )
+    lock = worker_state.redis_client.lock(name=lock_name, timeout=scrapping_lock_time_limit)
     try:
         have_lock = lock.acquire(blocking=False)
-        # if have_lock:
-        search(url=url)
-        # else:
-        #     logger.info(f"{pre_str}: lock taken")
+        if have_lock:
+            search(url=url)
+        else:
+            logger.info(f"{pre_str}: lock taken")
+    finally:
+        if have_lock:
+            lock.release()
+
+
+@app.task(
+    bind=True,
+    name=CELERY_RSS_TASK,
+    time_limit=searching_hard_time_limit,
+    soft_time_limit=searching_soft_time_limit,
+)
+def celery_link_rss_scrapper(
+    self: celery.Task,
+    url: str,
+    **kwargs: Any,
+) -> None:
+    pre_str = f"celery rss (url): ({url})"
+    logger.info(pre_str)
+
+    global worker_state
+
+    lock_name = url
+    have_lock = False
+    lock = worker_state.redis_client.lock(name=lock_name, timeout=scrapping_lock_time_limit)
+    try:
+        have_lock = lock.acquire(blocking=False)
+        if have_lock:
+            rss(url=url)
+        else:
+            logger.info(f"{pre_str}: lock taken")
     finally:
         if have_lock:
             lock.release()

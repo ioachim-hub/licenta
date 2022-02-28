@@ -20,6 +20,7 @@ redis:
 
 site:
   - url: "https://www.timesnewroman.ro/"
+    type: "news"
     routes:
       - "politic/"
       - "sport/"
@@ -27,4 +28,8 @@ site:
       - "it-stiinta/"
       - "monden/"
   - url: "https://www.biziday.ro/"
+    type: "news"
+    routes: []
+  - url: "https://www.biziday.ro/feed"
+    type: "rss"
     routes: []

@@ -4,6 +4,7 @@ import pandas as pd
 
 class SiteConfig(pydantic.BaseModel):
     url: str
+    type: str
     routes: list[str]
 
 
