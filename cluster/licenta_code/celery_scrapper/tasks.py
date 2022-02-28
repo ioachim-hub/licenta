@@ -5,6 +5,7 @@ import celery
 from celery.signals import worker_process_init
 from celery.utils.dispatch.signal import Signal
 from celery.utils.log import get_task_logger
+from cluster.licenta_code.scrapper.search_logic import search_logic
 
 from licenta_code.celery.common import CELERY_SCRAPP_TASK, CELERY_SEARCH_TASK
 
@@ -27,6 +28,10 @@ worker_state: WorkerState
 scrapping_soft_time_limit: Final = 10 * 60
 scrapping_hard_time_limit: Final = 11 * 60
 scrapping_lock_time_limit: Final = scrapping_hard_time_limit + 60
+
+searching_soft_time_limit: Final = 10 * 180
+searching_hard_time_limit: Final = 11 * 180
+searching_lock_time_limit: Final = searching_hard_time_limit + 180
 driver = get_driver()
 
 
@@ -119,8 +124,20 @@ def scrapper(url: str, route: str) -> None:
         collection.insert_many([entry.dict() for entry in entries])
 
 
-def search(url: str, route: str) -> None:
-    pass
+def search(url: str) -> None:
+    collection = worker_state.mongodb_db[MONGODB_SCRAPPED_COLLECTION_NAME]
+
+    fil = {"domain": "", "title": "", "content": ""}
+    driver.get(f"{url}")
+    while True:
+        entries_db: list[Entry] = []
+
+        for e in collection.find(fil):
+            entries_db.append(Entry.parse_obj(e))
+
+        entries = search_logic(url=url, existing_entries=entries_db, driver=driver)
+        if len(entries) != 0:
+            collection.insert_many([entry.dict() for entry in entries])
 
 
 @app.task(
@@ -159,31 +176,30 @@ def celery_scrapper(
 @app.task(
     bind=True,
     name=CELERY_SEARCH_TASK,
-    time_limit=scrapping_hard_time_limit,
-    soft_time_limit=scrapping_soft_time_limit,
+    time_limit=searching_hard_time_limit,
+    soft_time_limit=searching_soft_time_limit,
 )
 def celery_link_searcher_scrapper(
     self: celery.Task,
     url: str,
-    route: str,
     **kwargs: Any,
 ) -> None:
-    pre_str = f"celery search (url, route): ({url}, {route})"
+    pre_str = f"celery search (url): ({url})"
     logger.info(pre_str)
 
     global worker_state
 
-    lock_name = url + route
+    lock_name = url
     have_lock = False
     lock = worker_state.redis_client.lock(
         name=lock_name, timeout=scrapping_lock_time_limit
     )
     try:
         have_lock = lock.acquire(blocking=False)
-        if have_lock:
-            scrapper(url=url, route=route)
-        else:
-            logger.info(f"{pre_str}: lock taken")
+        # if have_lock:
+        search(url=url)
+        # else:
+        #     logger.info(f"{pre_str}: lock taken")
     finally:
         if have_lock:
             lock.release()
