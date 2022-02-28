@@ -6,6 +6,7 @@ import celery
 from licenta_code.celery.common import (
     CELERY_SCRAPP_QUEUE,
     CELERY_SCRAPP_TASK,
+    CELERY_SEARCH_TASK,
 )
 
 from licenta_code.celery_beat.celery_app import app, cfg
@@ -21,19 +22,30 @@ def setup_periodic_tasks(
     **kwargs: Any,
 ) -> None:
     logging.info("populating scheduler...")
-    for site in cfg.site:
-        for route in site.routes:
-            day_freq_sec = 3600
-            freq_sec = 3600
 
-            expires = int(freq_sec * cfg.celery.expires_multiplier)
+    day_freq_sec = 1
+    freq_sec = 3600
+
+    expires = int(freq_sec * cfg.celery.expires_multiplier)
+
+    for site in cfg.site:
+        if len(site.routes) > 0:
+            for route in site.routes:
+                req = celery.signature(
+                    CELERY_SCRAPP_TASK,
+                    kwargs=dict(url=site.url, route=route),
+                    queue=CELERY_SCRAPP_QUEUE,
+                    expires=expires,
+                    immutable=True,
+                )
+                sender.add_periodic_task(day_freq_sec, req)
+        else:
             req = celery.signature(
-                CELERY_SCRAPP_TASK,
-                kwargs=dict(url=site.url, route=route),
+                CELERY_SEARCH_TASK,
+                kwargs=dict(url=site.url),
                 queue=CELERY_SCRAPP_QUEUE,
                 expires=expires,
                 immutable=True,
             )
             sender.add_periodic_task(day_freq_sec, req)
-
     logging.info("done")
