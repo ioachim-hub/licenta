@@ -24,7 +24,7 @@ def setup_periodic_tasks(
 ) -> None:
     logging.info("populating scheduler...")
 
-    day_freq_sec = 1
+    day_freq_sec = 300
     freq_sec = 3600
 
     expires = int(freq_sec * cfg.celery.expires_multiplier)
