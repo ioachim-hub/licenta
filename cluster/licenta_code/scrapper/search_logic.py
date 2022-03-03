@@ -1,5 +1,7 @@
 import time
 
+import pandas as pd
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -63,6 +65,6 @@ def search_logic(
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
         for link in links:
-            entries.append(Entry(site=url, link=link))
+            entries.append(Entry(site=url, link=link, date=pd.Timestamp.now()))
 
     return entries

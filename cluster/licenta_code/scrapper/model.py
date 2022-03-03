@@ -24,4 +24,4 @@ class Entry(pydantic.BaseModel):
     link: str = ""
     title: str = ""
     content: str = ""
-    date: pd.Timestamp = pd.Timestamp.now()
+    date: pd.Timestamp = pd.Timestamp.min

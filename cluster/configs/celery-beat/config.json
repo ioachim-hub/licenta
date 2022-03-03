@@ -34,6 +34,17 @@
             "type": "rss",
             "url": "https://www.biziday.ro/feed",
             "routes": []
+        },
+        {
+            "type": "news",
+            "url": "https://www.digi24.ro/",
+            "routes": [
+                "stiri/actualitate/politica",
+                "stiri/actualitate",
+                "stiri/economie",
+                "stiri/externe",
+                "stiri/sport"
+            ]
         }
     ]
 }
