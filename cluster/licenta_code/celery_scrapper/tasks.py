@@ -330,10 +330,10 @@ def celery_scrapper(
     )
     try:
         have_lock = lock.acquire(blocking=False)
-        # if have_lock:
-        scrapper(url=url, route=route)
-        # else:
-        logger.info(f"{pre_str}: lock taken")
+        if have_lock:
+            scrapper(url=url, route=route)
+        else:
+            logger.info(f"{pre_str}: lock taken")
     finally:
         if have_lock:
             lock.release()
