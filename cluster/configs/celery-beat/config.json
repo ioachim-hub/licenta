@@ -15,7 +15,7 @@
     },
     "site": [
         {
-	    "type": "news",
+            "type": "news",
             "url": "https://www.timesnewroman.ro/",
             "routes": [
                 "politic/",
@@ -26,7 +26,7 @@
             ]
         },
         {
-	    "type": "news",
+            "type": "news",
             "url": "https://www.biziday.ro/",
             "routes": []
         },

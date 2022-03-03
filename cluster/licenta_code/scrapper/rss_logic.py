@@ -1,5 +1,6 @@
 import xmltodict
 
+import bs4
 import pandas as pd
 from requests_html import HTMLSession
 
@@ -29,7 +30,7 @@ def rss_logic(url: str, existing_entries: list[Entry]) -> list[Entry]:
                     site=url,
                     link=item["link"],
                     title=item["title"],
-                    content=item["description"],
+                    content=bs4.BeautifulSoup(item["content:encoded"]).get_text(),
                     date=pd.to_datetime(item["pubDate"]),
                 )
             )
