@@ -25,7 +25,7 @@ def setup_periodic_tasks(
 ) -> None:
     logging.info("populating scheduler...")
 
-    day_freq_sec = 300
+    day_freq_sec = 3600
     freq_sec = 3600
 
     expires = int(freq_sec * cfg.celery.expires_multiplier)
@@ -37,7 +37,7 @@ def setup_periodic_tasks(
         expires=expires,
         immutable=True,
     )
-    sender.add_periodic_task(1, req)
+    sender.add_periodic_task(day_freq_sec, req)
 
     for site in cfg.site:
         if site.type == "rss":

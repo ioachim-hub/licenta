@@ -98,9 +98,34 @@ def binary_search(low: int, high: int, date: pd.Timestamp, path: str) -> int:
         return -1
 
 
+def check_first_page(url: str, route: str, date: pd.Timestamp) -> bool:
+    driver.get(f"{url + route}/page/1")
+    articles = WebDriverWait(driver, 3).until(
+        expected_conditions.presence_of_all_elements_located(
+            (By.CSS_SELECTOR, 'article[class^="article-box"]')
+        )
+    )
+    dates = []
+    for idx in range(len(articles)):
+        elems_dates = articles[idx].find_elements_by_class_name("date")
+        new_dates = [
+            pd.to_datetime(convert_date(el.text), format="%d %m %Y")
+            for el in elems_dates
+        ]
+        dates.extend(new_dates)
+    dates.sort()
+
+    if dates[0] <= date and dates[-1] >= date:
+        return False
+
+    return True
+
+
 def find_page_by_date(url: str, route: str, date: pd.Timestamp) -> int:
-    last_page = find_last_page(url, route)
-    page = binary_search(1, last_page, date, url + route)
+    page = 1
+    if check_first_page(url=url, route=route, date=date):
+        last_page = find_last_page(url, route)
+        page = binary_search(1, last_page, date, url + route)
     return page
 
 
