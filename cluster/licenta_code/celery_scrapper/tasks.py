@@ -6,6 +6,8 @@ from celery.signals import worker_process_init
 from celery.utils.dispatch.signal import Signal
 from celery.utils.log import get_task_logger
 
+from requests_html import HTMLSession
+
 from licenta_code.celery.common import (
     CELERY_RSS_TASK,
     CELERY_SCRAPP_TASK,
@@ -25,7 +27,7 @@ from licenta_code.mongodb.common import MONGODB_SCRAPPED_COLLECTION_NAME
 from licenta_code.scrapper.model import Entry
 from licenta_code.scrapper.common import get_driver
 
-from licenta_code.scrapper.scrapper_logic import scrapper_logic
+from licenta_code.scrapper.scrapper_logic import scrapper_logic_tnr, scrapper_logic_digi
 from licenta_code.scrapper.search_logic import search_logic
 from licenta_code.scrapper.rss_logic import rss_logic
 from licenta_code.scrapper.fill_logic import fill_logic
@@ -56,7 +58,7 @@ def worker_process_init_fn(
     worker_state = WorkerState()
 
 
-def find_last_page(url: str, route: str) -> int:
+def find_last_page_tnr(url: str, route: str) -> int:
     driver.get(url + route)
     number = WebDriverWait(driver, 3).until(
         expected_conditions.presence_of_all_elements_located(
@@ -66,27 +68,72 @@ def find_last_page(url: str, route: str) -> int:
     return int(number[0].accessible_name)
 
 
+def find_last_page_digi(url: str, route: str) -> int:
+    driver.get(f"{url + route}?p=9999")
+    number = WebDriverWait(driver, 3).until(
+        expected_conditions.presence_of_all_elements_located(
+            (By.XPATH, "/html/body/main/section/div[3]/div/div[1]/nav/div/div[2]/a[5]")
+        )
+    )
+    return int(number[0].accessible_name)
+
+
+def get_dates_tnr(path: str, mid: int) -> list[pd.Timestamp]:
+    driver.get(f"{path}/page/{mid}")
+    articles = WebDriverWait(driver, 3).until(
+        expected_conditions.presence_of_all_elements_located(
+            (By.CSS_SELECTOR, 'article[class^="article-box"]')
+        )
+    )
+    dates = []
+    for idx in range(len(articles)):
+        elems_dates = articles[idx].find_elements_by_class_name("date")
+        new_dates = [
+            pd.to_datetime(convert_date(el.text), format="%d %m %Y")
+            for el in elems_dates
+        ]
+        dates.extend(new_dates)
+    dates.sort()
+
+    return dates
+
+
+def get_dates_digi(path: str, mid: int) -> list[pd.Timestamp]:
+    session = HTMLSession()
+
+    driver.get(f"{path}?p={mid}")
+    articles = WebDriverWait(driver, 3).until(
+        expected_conditions.presence_of_all_elements_located((By.TAG_NAME, "article"))
+    )
+    dates = []
+    for idx in range(len(articles)):
+        elems_dates = articles[idx].find_elements_by_css_selector("h2 > a")
+        data = session.get(elems_dates[0].get_attribute("href"))
+        date = pd.to_datetime(
+            data.html.find(
+                "#article-content > article > div > div.flex.flex-center > div"
+                + " > div > div:nth-child(1) > div > div > span > time"
+            )[0]
+            .text.encode("utf-8")
+            .decode()
+        )
+        dates.append(date)
+    dates.sort()
+
+    return dates
+
+
 # https://www.geeksforgeeks.org/python-program-for-binary-search/
 # this code is modeled to serve the scope
 def binary_search(low: int, high: int, date: pd.Timestamp, path: str) -> int:
     if high >= low:
         mid = (high + low) // 2
 
-        driver.get(f"{path}/page/{mid}")
-        articles = WebDriverWait(driver, 3).until(
-            expected_conditions.presence_of_all_elements_located(
-                (By.CSS_SELECTOR, 'article[class^="article-box"]')
-            )
-        )
-        dates = []
-        for idx in range(len(articles)):
-            elems_dates = articles[idx].find_elements_by_class_name("date")
-            new_dates = [
-                pd.to_datetime(convert_date(el.text), format="%d %m %Y")
-                for el in elems_dates
-            ]
-            dates.extend(new_dates)
-        dates.sort()
+        dates: list[pd.Timestamp] = []
+        if "https://www.timesnewroman.ro/" in path:
+            dates = get_dates_tnr(path=path, mid=mid)
+        elif "https://www.digi24.ro/" in path:
+            dates = get_dates_digi(path=path, mid=mid)
 
         if dates[0] <= date and dates[-1] >= date:
             return mid
@@ -98,7 +145,7 @@ def binary_search(low: int, high: int, date: pd.Timestamp, path: str) -> int:
         return -1
 
 
-def check_first_page(url: str, route: str, date: pd.Timestamp) -> bool:
+def check_first_page_tnr(url: str, route: str, date_: pd.Timestamp) -> bool:
     driver.get(f"{url + route}/page/1")
     articles = WebDriverWait(driver, 3).until(
         expected_conditions.presence_of_all_elements_located(
@@ -115,7 +162,35 @@ def check_first_page(url: str, route: str, date: pd.Timestamp) -> bool:
         dates.extend(new_dates)
     dates.sort()
 
-    if dates[0] <= date and dates[-1] >= date:
+    if dates[0] <= date_ and dates[-1] >= date_:
+        return False
+
+    return True
+
+
+def check_first_page_digi(url: str, route: str, date_: pd.Timestamp) -> bool:
+    session = HTMLSession()
+
+    driver.get(f"{url + route}?p=1")
+    articles = WebDriverWait(driver, 3).until(
+        expected_conditions.presence_of_all_elements_located((By.TAG_NAME, "article"))
+    )
+    dates = []
+    for idx in range(len(articles)):
+        elems_dates = articles[idx].find_elements_by_css_selector("h2 > a")
+        data = session.get(elems_dates[0].get_attribute("href"))
+        date = pd.to_datetime(
+            data.html.find(
+                "#article-content > article > div > div.flex.flex-center > div"
+                + " > div > div:nth-child(1) > div > div > span > time"
+            )[0]
+            .text.encode("utf-8")
+            .decode()
+        )
+        dates.append(date)
+    dates.sort()
+
+    if dates[0] <= date_ and dates[-1] >= date_:
         return False
 
     return True
@@ -123,20 +198,31 @@ def check_first_page(url: str, route: str, date: pd.Timestamp) -> bool:
 
 def find_page_by_date(url: str, route: str, date: pd.Timestamp) -> int:
     page = 1
-    if check_first_page(url=url, route=route, date=date):
-        last_page = find_last_page(url, route)
-        page = binary_search(1, last_page, date, url + route)
+    if url == "https://www.timesnewroman.ro/":
+        if check_first_page_tnr(url=url, route=route, date_=date):
+            last_page = find_last_page_tnr(url, route)
+            page = binary_search(1, last_page, date, url + route)
+    elif url == "https://www.digi24.ro/":
+        if check_first_page_digi(url=url, route=route, date_=date):
+            last_page = find_last_page_digi(url, route)
+            page = binary_search(1, last_page, date, url + route)
     return page
 
 
 def find_start_page(url: str, route: str) -> int:
-    last_page = find_last_page(url, route)
-    entry: Entry
+    last_page: int
+    if url == "https://www.timesnewroman.ro/":
+        last_page = find_last_page_tnr(url, route)
+    elif url == "https://www.digi24.ro/":
+        last_page = find_last_page_digi(url, route)
+
+    entry: Entry = Entry()
+
     collection = worker_state.mongodb_db[MONGODB_SCRAPPED_COLLECTION_NAME]
     for e in collection.find({"site": url, "domain": route}).sort("date", -1):
         entry = Entry.parse_obj(e)
         break
-    if entry is None:
+    if entry.site == "":
         return last_page
     else:
         return find_page_by_date(url, route, entry.date)
@@ -146,13 +232,16 @@ def scrapper(url: str, route: str) -> None:
     start_page = find_start_page(url, route)
     if start_page == -1:
         pass
-    entry: Entry
+    entry: Entry = Entry()
     collection = worker_state.mongodb_db[MONGODB_SCRAPPED_COLLECTION_NAME]
     for e in collection.find({"site": url, "domain": route}).sort("date", -1):
         entry = Entry.parse_obj(e)
         break
     for page in range(start_page, 0, -1):
-        entries = scrapper_logic(url, route, page, entry.date)
+        if url == "https://www.timesnewroman.ro/":
+            entries = scrapper_logic_tnr(url, route, page, entry.date)
+        elif url == "https://www.digi24.ro/":
+            entries = scrapper_logic_digi(url, route, page, entry.date)
         if entries == []:
             continue
         collection.insert_many([entry.dict() for entry in entries])
@@ -241,10 +330,10 @@ def celery_scrapper(
     )
     try:
         have_lock = lock.acquire(blocking=False)
-        if have_lock:
-            scrapper(url=url, route=route)
-        else:
-            logger.info(f"{pre_str}: lock taken")
+        # if have_lock:
+        scrapper(url=url, route=route)
+        # else:
+        logger.info(f"{pre_str}: lock taken")
     finally:
         if have_lock:
             lock.release()
@@ -337,10 +426,10 @@ def celery_fill_scrapper(
     )
     try:
         have_lock = lock.acquire(blocking=False)
-        # if have_lock:
-        fill(url=url)
-        # else:
-        logger.info(f"{pre_str}: lock taken")
+        if have_lock:
+            fill(url=url)
+        else:
+            logger.info(f"{pre_str}: lock taken")
     finally:
         if have_lock:
             lock.release()

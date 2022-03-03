@@ -33,3 +33,11 @@ site:
   - url: "https://www.biziday.ro/feed"
     type: "rss"
     routes: []
+  - url: "https://www.digi24.ro/"
+    type: "news"
+    routes:
+      - "stiri/actualitate/politica"
+      - "stiri/actualitate"
+      - "stiri/economie"
+      - "stiri/externe"
+      - "stiri/sport"
