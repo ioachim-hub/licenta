@@ -4,8 +4,9 @@ import logging
 import celery
 
 from licenta_code.celery.common import (
-    CELERY_RSS_TASK,
     CELERY_SCRAPP_QUEUE,
+    CELERY_RSS_TASK,
+    CELERY_FILL_TASK,
     CELERY_SCRAPP_TASK,
     CELERY_SEARCH_TASK,
 )
@@ -28,6 +29,15 @@ def setup_periodic_tasks(
     freq_sec = 3600
 
     expires = int(freq_sec * cfg.celery.expires_multiplier)
+
+    req = celery.signature(
+        CELERY_FILL_TASK,
+        kwargs=dict(url=""),
+        queue=CELERY_SCRAPP_QUEUE,
+        expires=expires,
+        immutable=True,
+    )
+    sender.add_periodic_task(1, req)
 
     for site in cfg.site:
         if site.type == "rss":

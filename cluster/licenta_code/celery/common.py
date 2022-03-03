@@ -7,6 +7,7 @@ CELERY_SCRAPP_QUEUE = "scrapp"
 CELERY_SCRAPP_TASK = "scrapp"
 CELERY_SEARCH_TASK = "search"
 CELERY_RSS_TASK = "rss"
+CELERY_FILL_TASK = "fill"
 
 
 class CeleryConfig(pydantic.BaseModel):
