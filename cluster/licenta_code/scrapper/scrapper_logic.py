@@ -97,7 +97,8 @@ def scrapper_logic_digi(
                 + " > div > div:nth-child(1) > div > div > span > time"
             )[0]
             .text.encode("utf-8")
-            .decode()
+            .decode(),
+            format="%d.%m.%Y %H:%M",
         )
         title = data.html.find("h1")[0].text.encode("utf-8").decode()
         content = ""
