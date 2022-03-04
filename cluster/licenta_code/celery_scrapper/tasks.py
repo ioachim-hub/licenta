@@ -115,7 +115,8 @@ def get_dates_digi(path: str, mid: int) -> list[pd.Timestamp]:
                 + " > div > div:nth-child(1) > div > div > span > time"
             )[0]
             .text.encode("utf-8")
-            .decode()
+            .decode(),
+            format="%d.%m.%Y %H:%M",
         )
         dates.append(date)
     dates.sort()
@@ -185,7 +186,8 @@ def check_first_page_digi(url: str, route: str, date_: pd.Timestamp) -> bool:
                 + " > div > div:nth-child(1) > div > div > span > time"
             )[0]
             .text.encode("utf-8")
-            .decode()
+            .decode(),
+            format="%d.%m.%Y %H:%M",
         )
         dates.append(date)
     dates.sort()
