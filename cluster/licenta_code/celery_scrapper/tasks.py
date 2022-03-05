@@ -59,6 +59,8 @@ def worker_process_init_fn(
 
 
 def find_last_page_tnr(url: str, route: str) -> int:
+    logger.info("find last page on TNR")
+
     driver.get(url + route)
     number = WebDriverWait(driver, 3).until(
         expected_conditions.presence_of_all_elements_located(
@@ -69,6 +71,9 @@ def find_last_page_tnr(url: str, route: str) -> int:
 
 
 def find_last_page_digi(url: str, route: str) -> int:
+    logger.info("find last page on digi")
+
+
     driver.get(f"{url + route}?p=9999")
     number = WebDriverWait(driver, 3).until(
         expected_conditions.presence_of_all_elements_located(
@@ -79,6 +84,8 @@ def find_last_page_digi(url: str, route: str) -> int:
 
 
 def get_dates_tnr(path: str, mid: int) -> list[pd.Timestamp]:
+    logger.info("date dates tnr")
+
     driver.get(f"{path}/page/{mid}")
     articles = WebDriverWait(driver, 3).until(
         expected_conditions.presence_of_all_elements_located(
@@ -99,6 +106,8 @@ def get_dates_tnr(path: str, mid: int) -> list[pd.Timestamp]:
 
 
 def get_dates_digi(path: str, mid: int) -> list[pd.Timestamp]:
+    logger.info("get dates digi")
+
     session = HTMLSession()
 
     driver.get(f"{path}?p={mid}")
@@ -147,6 +156,8 @@ def binary_search(low: int, high: int, date: pd.Timestamp, path: str) -> int:
 
 
 def check_first_page_tnr(url: str, route: str, date_: pd.Timestamp) -> bool:
+    logger.info("check first page on tnr")
+
     driver.get(f"{url + route}/page/1")
     articles = WebDriverWait(driver, 3).until(
         expected_conditions.presence_of_all_elements_located(
@@ -170,6 +181,8 @@ def check_first_page_tnr(url: str, route: str, date_: pd.Timestamp) -> bool:
 
 
 def check_first_page_digi(url: str, route: str, date_: pd.Timestamp) -> bool:
+    logger.info("check first page on digi")
+
     session = HTMLSession()
 
     driver.get(f"{url + route}?p=1")
@@ -199,6 +212,8 @@ def check_first_page_digi(url: str, route: str, date_: pd.Timestamp) -> bool:
 
 
 def find_page_by_date(url: str, route: str, date: pd.Timestamp) -> int:
+    logger.info("find page by date")
+
     page = 1
     if url == "https://www.timesnewroman.ro/":
         if check_first_page_tnr(url=url, route=route, date_=date):
@@ -212,6 +227,8 @@ def find_page_by_date(url: str, route: str, date: pd.Timestamp) -> int:
 
 
 def find_start_page(url: str, route: str) -> int:
+    logger.info("find start page")
+
     last_page: int
     if url == "https://www.timesnewroman.ro/":
         last_page = find_last_page_tnr(url, route)
@@ -231,6 +248,8 @@ def find_start_page(url: str, route: str) -> int:
 
 
 def scrapper(url: str, route: str) -> None:
+    logger.info("start scrapping")
+
     start_page = find_start_page(url, route)
     if start_page == -1:
         pass
@@ -240,6 +259,8 @@ def scrapper(url: str, route: str) -> None:
         entry = Entry.parse_obj(e)
         break
     for page in range(start_page, 0, -1):
+        logger.info(f"scrapping from page: {page}")
+
         if url == "https://www.timesnewroman.ro/":
             entries = scrapper_logic_tnr(url, route, page, entry.date)
         elif url == "https://www.digi24.ro/":
@@ -250,6 +271,8 @@ def scrapper(url: str, route: str) -> None:
 
 
 def search(url: str) -> None:
+    logger.info("start searching")
+
     collection = worker_state.mongodb_db[MONGODB_SCRAPPED_COLLECTION_NAME]
 
     fil = {"domain": "", "title": "", "content": ""}
@@ -266,6 +289,8 @@ def search(url: str) -> None:
 
 
 def rss(url: str) -> None:
+    logger.info("start rss")
+
     collection = worker_state.mongodb_db[MONGODB_SCRAPPED_COLLECTION_NAME]
 
     entries_db: list[Entry] = []
@@ -287,6 +312,8 @@ def rss(url: str) -> None:
 
 
 def fill(url: str) -> None:
+    logger.info("start fill")
+
     collection = worker_state.mongodb_db[MONGODB_SCRAPPED_COLLECTION_NAME]
 
     entries_db: list[Entry] = []
