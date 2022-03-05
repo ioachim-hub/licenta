@@ -36,8 +36,8 @@ from licenta_code.scrapper.common import convert_date
 
 logger = get_task_logger(__name__)
 worker_state: WorkerState
-scrapping_soft_time_limit: Final = 10 * 60
-scrapping_hard_time_limit: Final = 11 * 60
+scrapping_soft_time_limit: Final = 10 * 120
+scrapping_hard_time_limit: Final = 11 * 120
 scrapping_lock_time_limit: Final = scrapping_hard_time_limit + 60
 
 searching_soft_time_limit: Final = 10 * 180
