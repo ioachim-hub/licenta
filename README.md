@@ -6,7 +6,7 @@ Licenta NLP and Server-Web product
 Project Organization
 
 ------------
-
+```bash
 ├── cluster
 │   ├── charts
 │   │   ├── app-infra
@@ -88,7 +88,7 @@ Project Organization
 ├── target
 ├── test_environment.py
 └── tox.ini
-
+```
 --------
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
