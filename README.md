@@ -82,7 +82,6 @@ Project Organization
 ├── src
 │   ├── data
 │   ├── features
-│   ├── __init__.py
 │   ├── models
 │   └── visualization
 ├── src.egg-info
