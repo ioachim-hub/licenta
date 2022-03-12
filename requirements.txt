@@ -23,7 +23,10 @@ mypy==0.931
 types-redis==4.1.7
 types-requests==2.27.5
 
-
 # scrapper
 selenium==4.1.0
 requests-html==0.10.0
+
+# preprocessing
+tqdm==4.63.0
+pyarrow==7.0.0
