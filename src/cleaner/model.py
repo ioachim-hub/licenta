@@ -59,6 +59,72 @@ class Cleaner:
         self.r7 = re.compile(r"([^@]+@[^@]+\.[^@]+)")
 
         """
+        remove P.S.:
+        """
+        self.r8 = re.compile(r"P.S.: ")
+
+        """
+        remove "/* lorem ipsum"
+        """
+        self.r9 = re.compile(r"(\n| )\/\*.+")
+
+        """
+        remove '^- '
+        """
+        self.r10 = re.compile(r"^- ")
+
+        """
+        "(   dasdad dsad das a )" -> "(dasdad dsad das a)"
+        """
+        self.r11 = re.compile(r"\( +(.+) \)")
+
+        """
+        "<dasdad dsad das a>" -> "dasdad dsad das a"
+        """
+        self.r12 = re.compile(r"\( +(.+) \)")
+
+        """
+        remove "1. ... [1-9]+." (pass 1.700 or numbers)
+        1.
+        2.)
+        3. )
+        """
+        self.r13 = re.compile(r"[1-9]\.( |\))\)?")
+
+        """
+        remove "a) b) ... A) B) a.) A.)."
+        """
+        self.r14 = re.compile(r"\b[a-zA-Z]\.?\)")
+
+        """
+        remove "@@@ lorem ipsum @Zelensky (twitter tags)"
+        """
+        self.r15 = re.compile(r"@(.+|)")
+
+        """
+        remove "Surse alternative: lorem ipsum"
+        """
+        self.r16 = re.compile(r"Surse alternative:.+")
+
+        """
+        remove
+            REZULTATE BACALAUREAT
+            REZULTATE EVALUARE NAȚIONALĂ
+            Rezultate Admitere Liceu
+            Prezența la vot în județul
+        """
+        self.r17 = re.compile(
+            r"((REZULTATE BACALAUREAT)|(REZULTATE EVALUARE NAȚIONALĂ)|(Rezultate Admitere Liceu)|"
+            + r"(Prezența la vot în județul)).+",
+            re.IGNORECASE,
+        )
+
+        """
+        "Răspuns: "
+        """
+        self.r18 = re.compile(r"Răspuns: ")
+
+        """
         multiple spaces
         """
         self.space = re.compile(" +")
@@ -86,10 +152,10 @@ class Cleaner:
         # get stats about line
         length = len(line)
 
-        if length < min_line_length:
+        if len(line.split(" ")) < min_line_length:
             skipped_because_min_length += np.array([1, length], dtype=np.uint64)
             return (
-                line,
+                "",
                 skipped_because_min_length,
                 skipped_alpha_count,
                 skipped_because_max_numeric,
@@ -117,23 +183,57 @@ class Cleaner:
         # reject if forbidden char
         if forbidden_char:
             skipped_because_forbidden_chars += np.array([1, length], dtype=np.uint64)
+            return (
+                "",
+                skipped_because_min_length,
+                skipped_alpha_count,
+                skipped_because_max_numeric,
+                skipped_because_max_non_ascii,
+                skipped_because_forbidden_chars,
+            )
 
         # reject if number of letters is too small
         if alpha_count == 0 or alpha_count / length < 0.5:
             skipped_alpha_count += np.array([1, length], dtype=np.uint64)
             if self.verbose:
                 print(f"Skipping alpha={alpha_count / length:.3f}: [{line}]")
+            return (
+                "",
+                skipped_because_min_length,
+                skipped_alpha_count,
+                skipped_because_max_numeric,
+                skipped_because_max_non_ascii,
+                skipped_because_forbidden_chars,
+            )
 
         # reject if too many numbers
         if digit_count / alpha_count >= percent_max_numeric and digit_count > 6:
             skipped_because_max_numeric += np.array([1, length], dtype=np.uint64)
             if self.verbose:
                 print(f"Skipping digit={digit_count / alpha_count:.3f}: [{line}]")
+            return (
+                "",
+                skipped_because_min_length,
+                skipped_alpha_count,
+                skipped_because_max_numeric,
+                skipped_because_max_non_ascii,
+                skipped_because_forbidden_chars,
+            )
+
         # reject if too many non-ascii
         if ascii_count / alpha_count < percent_max_non_ascii and length > 15:
             skipped_because_max_non_ascii += np.array([1, length], dtype=np.uint64)
             if self.verbose:
                 print(f"Skipping ascii={digit_count / alpha_count:.3f}: [{line}]")
+            return (
+                "",
+                skipped_because_min_length,
+                skipped_alpha_count,
+                skipped_because_max_numeric,
+                skipped_because_max_non_ascii,
+                skipped_because_forbidden_chars,
+            )
+
         # clean line
         # print(f"\nbef: {line}")
         line = self.r1.sub(r"\1\2", line)
@@ -143,20 +243,52 @@ class Cleaner:
         line = self.r5.sub("", line)
         line = self.r6.sub("", line)
         line = self.r7.sub("", line)
+        line = self.r8.sub("", line)
+        line = self.r9.sub("", line)
+        line = self.r10.sub("", line)
+        line = self.r11.sub(r"(\1)", line)
+        line = self.r12.sub(r"\1", line)
+        line = self.r13.sub(r"", line)
+        line = self.r14.sub(r"", line)
+        line = self.r15.sub(r"", line)
+        line = self.r16.sub(r"", line)
+        line = self.r17.sub(r"", line)
+        line = self.r18.sub(r"", line)
 
-        line = line.replace("( ă)", "(ă)")
         line = line.replace("ţ", "ț")
         line = line.replace("ş", "ș")
         line = line.replace("Ţ", "Ț")
         line = line.replace("Ş", "Ș")
         line = line.replace("Ã¢", "â")
+        line = line.replace("”", '"')
+        line = line.replace("„", '"')
+        line = line.replace("\n", " ")
+        line = line.replace("Mai multe știri", " ")
+        line = line.replace("Susține echipa Biziday", " ")
+        line = line.replace(
+            "Dacă îți place ce facem, poți contribui tu pentru susținerea echipei Biziday.",
+            " ",
+        )
+        line = line.replace(
+            "Echipa Biziday nu a solicitat și nu a acceptat nicio"
+            + " formă de finanțare din fonduri guvernamentale. Spațiile de publicitate sunt"
+            + " limitate, iar reclama neinvazivă.",
+            " ",
+        )
+        line = line.replace("🔴", "")
+        line = line.replace("🎙️", "")
+        line = line.replace("📍", "")
+        line = line.replace("🥳", "")
+        line = line.replace("😂", "")
+        line = line.replace("", "")
+        line = line.replace("", "")
 
         # print(f"aft: {line}")
 
         line = self.space.sub(" ", line).strip()
 
         # check that after processing the line is not too short
-        if len(line) < min_line_length:
+        if len(line.split(" ")) < min_line_length:
             skipped_because_min_length += np.array([1, length], dtype=np.uint64)
 
         return (
@@ -243,24 +375,24 @@ class Cleaner:
 
     def print_stats(self, stats):
         print("\nCleaning statistics:")
-        print(f"Total original length (chars) = {stats['total_original_length']}")
-        print(f"Total length after cleaning (chars) = {stats['total_clean_length']}")
-        print(
-            f"Percent data kept = {100.0 * stats['total_clean_length'] / stats['total_original_length']:.3f} %"
-        )
-
-        print(
-            f"Skipped because line length was below minimum (lines/chars): {stats['skipped_because_min_length']}"
-        )
-        print(
-            f"Skipped because line had forbidden characters (lines/chars): {stats['skipped_because_forbidden_chars']}"
-        )
-        print(
-            f"Skipped because alpha count was below minimum (lines/chars): {stats['skipped_alpha_count']}"
-        )
-        print(
-            f"Skipped because digit count was above maximum (lines/chars): {stats['skipped_because_max_numeric']}"
-        )
-        print(
-            f"Skipped because too many non-ascii characters (lines/chars): {stats['skipped_because_max_non_ascii']}"
-        )
+        for column in self.columns:
+            print(
+                f"{column} Skipped because line length was below minimum"
+                + f" (lines/chars): {stats[f'{column}_skipped_because_min_length']}"
+            )
+            print(
+                f"{column} Skipped because line had forbidden characters"
+                + f" (lines/chars): {stats[f'{column}_skipped_because_forbidden_chars']}"
+            )
+            print(
+                f"{column} Skipped because alpha count was below minimum"
+                + f" (lines/chars): {stats[f'{column}_skipped_alpha_count']}"
+            )
+            print(
+                f"{column} Skipped because digit count was above maximum"
+                + f" (lines/chars): {stats[f'{column}_skipped_because_max_numeric']}"
+            )
+            print(
+                f"{column} Skipped because too many non-ascii characters"
+                + f" (lines/chars): {stats[f'{column}_skipped_because_max_non_ascii']}"
+            )
