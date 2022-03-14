@@ -280,8 +280,6 @@ class Cleaner:
         line = line.replace("📍", "")
         line = line.replace("🥳", "")
         line = line.replace("😂", "")
-        line = line.replace("", "")
-        line = line.replace("", "")
 
         # print(f"aft: {line}")
 
