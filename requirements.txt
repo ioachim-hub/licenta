@@ -30,3 +30,6 @@ requests-html==0.10.0
 # preprocessing
 tqdm==4.63.0
 pyarrow==7.0.0
+wordcloud==1.8.1
+stop-words==2018.7.23
+advertools==0.13.0
