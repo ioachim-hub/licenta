@@ -56,7 +56,7 @@ class Cleaner:
         """
         remove emails
         """
-        self.r7 = re.compile(r"([^@]+@[^@]+\.[^@]+)")
+        self.r7 = re.compile(r"\S+@\S+\.\S+")
 
         """
         remove P.S.:
@@ -141,27 +141,29 @@ class Cleaner:
         percent_max_numeric: float,
         percent_max_non_ascii: float,
     ):
-        skipped_because_min_length = np.array([0, 0], dtype=np.uint64)
-        skipped_alpha_count = np.array([0, 0], dtype=np.uint64)
-        skipped_because_max_numeric = np.array([0, 0], dtype=np.uint64)
-        skipped_because_max_non_ascii = np.array([0, 0], dtype=np.uint64)
-        skipped_because_forbidden_chars = np.array([0, 0], dtype=np.uint64)
+        return_stats = {
+            "skipped_because_min_length": np.array([0, 0], dtype=np.uint64),
+            "skipped_alpha_count": np.array([0, 0], dtype=np.uint64),
+            "skipped_because_max_numeric": np.array([0, 0], dtype=np.uint64),
+            "skipped_because_max_non_ascii": np.array([0, 0], dtype=np.uint64),
+            "skipped_because_forbidden_chars": np.array([0, 0], dtype=np.uint64),
+        }
 
         line = line.strip()
+
+        line = line.replace("\xa0", " ")
+        line = line.replace("þ", "ț")
+        line = line.replace("®", " ")
+        line = line.replace("™", " ")
 
         # get stats about line
         length = len(line)
 
         if len(line.split(" ")) < min_line_length:
-            skipped_because_min_length += np.array([1, length], dtype=np.uint64)
-            return (
-                "",
-                skipped_because_min_length,
-                skipped_alpha_count,
-                skipped_because_max_numeric,
-                skipped_because_max_non_ascii,
-                skipped_because_forbidden_chars,
+            return_stats["skipped_because_min_length"] += np.array(
+                [1, length], dtype=np.uint64
             )
+            return ("",) + tuple(return_stats.values())
 
         line = bytes(line, "utf-8").decode("utf-8", "ignore")  # strip not utf-8 chars
 
@@ -182,57 +184,37 @@ class Cleaner:
 
         # reject if forbidden char
         if forbidden_char:
-            skipped_because_forbidden_chars += np.array([1, length], dtype=np.uint64)
-            return (
-                "",
-                skipped_because_min_length,
-                skipped_alpha_count,
-                skipped_because_max_numeric,
-                skipped_because_max_non_ascii,
-                skipped_because_forbidden_chars,
+            return_stats["skipped_because_forbidden_chars"] += np.array(
+                [1, length], dtype=np.uint64
             )
+            return ("",) + tuple(return_stats.values())
 
         # reject if number of letters is too small
         if alpha_count == 0 or alpha_count / length < 0.5:
-            skipped_alpha_count += np.array([1, length], dtype=np.uint64)
+            return_stats["skipped_alpha_count"] += np.array(
+                [1, length], dtype=np.uint64
+            )
             if self.verbose:
                 print(f"Skipping alpha={alpha_count / length:.3f}: [{line}]")
-            return (
-                "",
-                skipped_because_min_length,
-                skipped_alpha_count,
-                skipped_because_max_numeric,
-                skipped_because_max_non_ascii,
-                skipped_because_forbidden_chars,
-            )
+            return ("",) + tuple(return_stats.values())
 
         # reject if too many numbers
         if digit_count / alpha_count >= percent_max_numeric and digit_count > 6:
-            skipped_because_max_numeric += np.array([1, length], dtype=np.uint64)
+            return_stats["skipped_because_max_numeric"] += np.array(
+                [1, length], dtype=np.uint64
+            )
             if self.verbose:
                 print(f"Skipping digit={digit_count / alpha_count:.3f}: [{line}]")
-            return (
-                "",
-                skipped_because_min_length,
-                skipped_alpha_count,
-                skipped_because_max_numeric,
-                skipped_because_max_non_ascii,
-                skipped_because_forbidden_chars,
-            )
+            return ("",) + tuple(return_stats.values())
 
         # reject if too many non-ascii
         if ascii_count / alpha_count < percent_max_non_ascii and length > 15:
-            skipped_because_max_non_ascii += np.array([1, length], dtype=np.uint64)
+            return_stats["skipped_because_max_non_ascii"] += np.array(
+                [1, length], dtype=np.uint64
+            )
             if self.verbose:
                 print(f"Skipping ascii={digit_count / alpha_count:.3f}: [{line}]")
-            return (
-                "",
-                skipped_because_min_length,
-                skipped_alpha_count,
-                skipped_because_max_numeric,
-                skipped_because_max_non_ascii,
-                skipped_because_forbidden_chars,
-            )
+            return ("",) + tuple(return_stats.values())
 
         # clean line
         # print(f"\nbef: {line}")
@@ -287,16 +269,11 @@ class Cleaner:
 
         # check that after processing the line is not too short
         if len(line.split(" ")) < min_line_length:
-            skipped_because_min_length += np.array([1, length], dtype=np.uint64)
+            return_stats["skipped_because_min_length"] += np.array(
+                [1, length], dtype=np.uint64
+            )
 
-        return (
-            line,
-            skipped_because_min_length,
-            skipped_alpha_count,
-            skipped_because_max_numeric,
-            skipped_because_max_non_ascii,
-            skipped_because_forbidden_chars,
-        )
+        return (line,) + tuple(return_stats.values())
 
     def multiprocessing_thread(
         self,
