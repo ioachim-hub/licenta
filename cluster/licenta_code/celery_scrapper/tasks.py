@@ -73,7 +73,6 @@ def find_last_page_tnr(url: str, route: str) -> int:
 def find_last_page_digi(url: str, route: str) -> int:
     logger.info("find last page on digi")
 
-
     driver.get(f"{url + route}?p=9999")
     number = WebDriverWait(driver, 3).until(
         expected_conditions.presence_of_all_elements_located(
@@ -360,7 +359,10 @@ def celery_scrapper(
     try:
         have_lock = lock.acquire(blocking=False)
         if have_lock:
-            scrapper(url=url, route=route)
+            try:
+                scrapper(url=url, route=route)
+            except Exception as e:
+                print(e)
         else:
             logger.info(f"{pre_str}: lock taken")
     finally:
@@ -392,7 +394,10 @@ def celery_link_searcher_scrapper(
     try:
         have_lock = lock.acquire(blocking=False)
         if have_lock:
-            search(url=url)
+            try:
+                search(url=url)
+            except Exception as e:
+                print(e)
         else:
             logger.info(f"{pre_str}: lock taken")
     finally:
@@ -424,7 +429,10 @@ def celery_link_rss_scrapper(
     try:
         have_lock = lock.acquire(blocking=False)
         if have_lock:
-            rss(url=url)
+            try:
+                rss(url=url)
+            except Exception as e:
+                print(e)
         else:
             logger.info(f"{pre_str}: lock taken")
     finally:
@@ -456,7 +464,10 @@ def celery_fill_scrapper(
     try:
         have_lock = lock.acquire(blocking=False)
         if have_lock:
-            fill(url=url)
+            try:
+                fill(url=url)
+            except Exception as e:
+                print(e)
         else:
             logger.info(f"{pre_str}: lock taken")
     finally:
