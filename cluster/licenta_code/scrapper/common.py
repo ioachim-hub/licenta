@@ -62,4 +62,4 @@ def convert_date(date: str) -> str:
         "decembrie,": "12",
     }
 
-    return f"{datelist[0]} {enrichment[datelist[1]]} {datelist[2]}"
+    return f"{datelist[0]} {enrichment[datelist[1].lower()]} {datelist[2]}"

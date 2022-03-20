@@ -23,7 +23,7 @@
                 "life-death/",
                 "it-stiinta/",
                 "monden/"
-            ],
+            ]
         },
         {
             "type": "news",
@@ -45,6 +45,19 @@
                 "stiri/externe",
                 "stiri/sport",
                 "stiri/sci-tech"
+            ]
+        },
+        {
+            "type": "news",
+            "url": "https://www.aktual24.ro/",
+            "routes": [
+                "category/news/",
+                "category/politica/",
+                "category/analize/",
+                "category/opinii/",
+                "category/externe/",
+                "category/money/",
+                "category/life/"
             ]
         }
     ]
