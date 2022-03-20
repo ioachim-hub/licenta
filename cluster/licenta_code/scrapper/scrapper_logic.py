@@ -124,3 +124,63 @@ def scrapper_logic_digi(
         )
 
     return entries
+
+
+def scrapper_logic_aktual(
+    url: str, route: str, page: int, date_date: pd.Timestamp
+) -> list[Entry]:
+    entries: list[Entry] = []
+    print(f"scrapping from: {url}{route}page/{page}")
+
+    driver.get(f"{url}{route}page/{page}")
+
+    articles = WebDriverWait(driver, 3).until(
+        expected_conditions.presence_of_all_elements_located((By.TAG_NAME, "article"))
+    )
+
+    links = []
+
+    for idx in range(len(articles)):
+        try:
+            link = (
+                articles[idx]
+                .find_elements_by_css_selector("h1 > a")[0]
+                .get_attribute("href")
+            )
+        except Exception:
+            continue
+        links.append(link)
+
+    session = HTMLSession()
+    for link in links:
+        data = session.get(link)
+        try:
+            date = pd.to_datetime(
+                data.html.find(
+                    "div.art-info > p.byline.entry-meta.vcard > span > time"
+                )[0].attrs["datetime"],
+                format="%Y-%m-%d",
+            )
+            title = data.html.find("h1")[0].text.encode("utf-8").decode()
+            content = ""
+            for paragraph in data.html.find("div.single__content > p"):
+                if "class" in paragraph.attrs:
+                    continue
+                content += paragraph.text.encode("utf-8").decode()
+            date_entry = pd.to_datetime(date)
+            if date_entry <= date_date:
+                continue
+            entries.append(
+                Entry(
+                    site=url,
+                    domain=route,
+                    title=title,
+                    link=link,
+                    content=content,
+                    date=date_entry,
+                )
+            )
+        except Exception:
+            continue
+
+    return entries
