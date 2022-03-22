@@ -60,6 +60,18 @@ def convert_date(date: str) -> str:
         "octombrie,": "10",
         "noiembrie,": "11",
         "decembrie,": "12",
+        "ianuarie": "1",
+        "februarie": "2",
+        "martie": "3",
+        "aprilie": "4",
+        "mai": "5",
+        "iunie": "6",
+        "iulie": "7",
+        "august": "8",
+        "septembrie": "9",
+        "octombrie": "10",
+        "noiembrie": "11",
+        "decembrie": "12",
     }
 
     return f"{datelist[0]} {enrichment[datelist[1].lower()]} {datelist[2]}"

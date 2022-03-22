@@ -1,5 +1,5 @@
 import pydantic
-import redis.client
+import redis.client  # type: ignore
 
 
 class RedisConfig(pydantic.BaseModel):
