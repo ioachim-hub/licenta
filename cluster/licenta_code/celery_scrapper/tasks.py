@@ -6,6 +6,8 @@ from celery.signals import worker_process_init
 from celery.utils.dispatch.signal import Signal
 from celery.utils.log import get_task_logger
 
+import selenium
+
 from requests_html import HTMLSession
 
 from licenta_code.celery.common import (
@@ -31,6 +33,9 @@ from licenta_code.scrapper.scrapper_logic import (
     scrapper_logic_tnr,
     scrapper_logic_digi,
     scrapper_logic_aktual,
+    scrapper_logic_activenews,
+    scrapper_logic_infoalert,
+    scrapper_logic_caplimpede,
 )
 from licenta_code.scrapper.search_logic import search_logic
 from licenta_code.scrapper.rss_logic import rss_logic
@@ -96,6 +101,65 @@ def find_last_page_aktual(url: str, route: str) -> int:
         )
     )
     return int(number[0].accessible_name.replace(".", ""))
+
+
+def find_last_page_infoalert(url: str, route: str) -> int:
+    logger.info("find last page on infoalert")
+
+    driver.get(f"{url + route}")
+    try:
+        number = WebDriverWait(driver, 3).until(
+            expected_conditions.presence_of_all_elements_located(
+                (
+                    By.CSS_SELECTOR,
+                    "#td-outer-wrap > div > div.td-container.td-category-container > div > div > "
+                    + "div.td-pb-span8.td-main-content > div > div.page-nav.td-pb-padding-side > span.pages",
+                )
+            )
+        )
+        return int(number[0].text.split(" ")[-1])
+    except Exception:
+        return 1
+
+
+def find_last_page_caplimpede(url: str, route: str) -> int:
+    logger.info("find last page on camlimpede")
+
+    driver.get(f"{url + route}")
+    try:
+        number = WebDriverWait(driver, 3).until(
+            expected_conditions.presence_of_all_elements_located(
+                (
+                    By.CSS_SELECTOR,
+                    "#td-outer-wrap > div > div.td-container.td-category-container > div > div:nth-child(2) > "
+                    + "div.td-pb-span8.td-main-content > div > div.page-nav.td-pb-padding-side > span.pages",
+                )
+            )
+        )
+        return int(number[0].text.split(" ")[-1].replace(".", ""))
+    except Exception:
+        return 1
+
+
+def find_last_page_activenews(url: str, route: str) -> int:
+    logger.info("find last page on activenews")
+
+    for page in range(50, 0, -1):
+        driver.get(f"{url + route}pagina-{page}")
+        try:
+            button = WebDriverWait(driver, 3).until(
+                expected_conditions.presence_of_all_elements_located(
+                    (
+                        By.CSS_SELECTOR,
+                        "#chrome > div.row.article-list > div > div:nth-child(1) > main > div.paginatie.cf > a",
+                    )
+                )
+            )
+        except selenium.common.exceptions.TimeoutException:
+            continue
+        if button is not None:
+            return page + 1
+    return 1
 
 
 def get_dates_tnr(path: str, mid: int) -> list[pd.Timestamp]:
@@ -176,6 +240,100 @@ def get_dates_aktual(path: str, mid: int) -> list[pd.Timestamp]:
     return dates
 
 
+def get_dates_activenews(path: str, mid: int) -> list[pd.Timestamp]:
+    logger.info("get dates activenews")
+
+    session = HTMLSession()
+
+    driver.get(f"{path}/pagina-{mid}")
+    articles = WebDriverWait(driver, 3).until(
+        expected_conditions.presence_of_all_elements_located((By.TAG_NAME, "article"))
+    )
+    dates = []
+    for idx in range(len(articles)):
+        try:
+            elems_dates = articles[idx].find_elements_by_css_selector("h2 > a")
+            data = session.get(elems_dates[0].get_attribute("href"))
+            date = pd.to_datetime(
+                convert_date(
+                    data.html.find(
+                        "div.row > div > div > div.article-meta > span.article-date"
+                    )[0].text.split(", ")[1]
+                ),
+                format="%d %m %Y",
+            )
+            dates.append(date)
+        except Exception:
+            continue
+    dates.sort()
+
+    return dates
+
+
+def get_dates_infoalert(path: str, mid: int) -> list[pd.Timestamp]:
+    logger.info("get dates infoalert")
+
+    driver.get(f"{path}/page/{mid}")
+    articles = WebDriverWait(driver, 3).until(
+        expected_conditions.presence_of_all_elements_located(
+            (
+                By.CSS_SELECTOR,
+                "#td-outer-wrap > div > div.td-container.td-category-container > div > div > "
+                + "div.td-pb-span8.td-main-content > div > div",
+            )
+        )
+    )
+    dates = []
+    for idx in range(len(articles)):
+        try:
+            date = pd.to_datetime(
+                convert_date(
+                    articles[idx]
+                    .find_elements_by_css_selector(
+                        "div.item-details > div.meta-info > span.td-post-date > time"
+                    )[0]
+                    .text
+                ),
+                format="%d %m %Y",
+            )
+            dates.append(date)
+        except Exception:
+            continue
+    dates.sort()
+
+    return dates
+
+
+def get_dates_caplimpede(path: str, mid: int) -> list[pd.Timestamp]:
+    logger.info("get dates caplimpede")
+
+    driver.get(f"{path}/page/{mid}")
+    articles = WebDriverWait(driver, 3).until(
+        expected_conditions.presence_of_all_elements_located(
+            (
+                By.CSS_SELECTOR,
+                "#td-outer-wrap > div > div.td-container.td-category-container > div > "
+                + "div:nth-child(2) > div.td-pb-span8.td-main-content > div > div",
+            )
+        )
+    )
+    dates = []
+    for idx in range(len(articles)):
+        try:
+            date = pd.to_datetime(
+                convert_date(
+                    articles[idx].find_elements_by_css_selector("time")[0].text
+                ),
+                format="%d %m %Y",
+            )
+            dates.append(date)
+        except Exception:
+            continue
+    dates.sort()
+
+    return dates
+
+
 # https://www.geeksforgeeks.org/python-program-for-binary-search/
 # this code is modeled to serve the scope
 def binary_search(low: int, high: int, date: pd.Timestamp, path: str) -> int:
@@ -189,6 +347,12 @@ def binary_search(low: int, high: int, date: pd.Timestamp, path: str) -> int:
             dates = get_dates_digi(path=path, mid=mid)
         elif "https://www.aktual24.ro/" in path:
             dates = get_dates_aktual(path=path, mid=mid)
+        elif "https://www.activenews.ro/" in path:
+            dates = get_dates_activenews(path=path, mid=mid)
+        elif "https://infoalert.ro/" in path:
+            dates = get_dates_infoalert(path=path, mid=mid)
+        elif "https://caplimpede.ro/" in path:
+            dates = get_dates_caplimpede(path=path, mid=mid)
 
         if dates[0] <= date and dates[-1] >= date:
             return mid
@@ -287,21 +451,126 @@ def check_first_page_aktual(url: str, route: str, date_: pd.Timestamp) -> bool:
     return True
 
 
-def find_page_by_date(url: str, route: str, date: pd.Timestamp) -> int:
+def check_first_page_activenews(url: str, route: str, date_: pd.Timestamp) -> bool:
+    logger.info("check first page on activenews")
+
+    session = HTMLSession()
+
+    driver.get(f"{url + route}pagina-1")
+    articles = WebDriverWait(driver, 3).until(
+        expected_conditions.presence_of_all_elements_located((By.TAG_NAME, "article"))
+    )
+    dates = []
+    for idx in range(len(articles)):
+        try:
+            elems_dates = articles[idx].find_elements_by_css_selector("h2 > a")
+            data = session.get(elems_dates[0].get_attribute("href"))
+            date = pd.to_datetime(
+                convert_date(
+                    data.html.find(
+                        "div.row > div > div > div.article-meta > span.article-date"
+                    )[0].text.split(", ")[1]
+                ),
+                format="%d %m %Y",
+            )
+            dates.append(date)
+        except Exception:
+            continue
+    dates.sort()
+
+    if dates[0] <= date_ and dates[-1] >= date_:
+        return False
+
+    return True
+
+
+def check_first_page_infoalert(url: str, route: str, date_: pd.Timestamp) -> bool:
+    logger.info("check first page on infoalert")
+
+    driver.get(f"{url + route}page/1/")
+    articles = WebDriverWait(driver, 3).until(
+        expected_conditions.presence_of_all_elements_located(
+            (
+                By.CSS_SELECTOR,
+                "#td-outer-wrap > div > div.td-container.td-category-container > div > "
+                + "div > div.td-pb-span8.td-main-content > div",
+            )
+        )
+    )
+    dates = []
+    for idx in range(len(articles)):
+        try:
+            date = pd.to_datetime(
+                convert_date(
+                    articles[idx].find_elements_by_css_selector("time")[0].text
+                ),
+                format="%d %m %Y",
+            )
+            dates.append(date)
+        except Exception:
+            continue
+    dates.sort()
+
+    if dates[0] <= date_ and dates[-1] >= date_:
+        return False
+
+    return True
+
+
+def check_first_page_caplimpede(url: str, route: str, date_: pd.Timestamp) -> bool:
+    logger.info("check first page on caplimpede")
+
+    driver.get(f"{url + route}page/1/")
+    articles = WebDriverWait(driver, 3).until(
+        expected_conditions.presence_of_all_elements_located(
+            (
+                By.CSS_SELECTOR,
+                "#td-outer-wrap > div > div.td-container.td-category-container > div > "
+                + "div:nth-child(2) > div.td-pb-span8.td-main-content > div > div",
+            )
+        )
+    )
+    dates = []
+    for idx in range(len(articles)):
+        try:
+            date = pd.to_datetime(
+                convert_date(
+                    articles[idx].find_elements_by_css_selector("time")[0].text
+                ),
+                format="%d %m %Y",
+            )
+            dates.append(date)
+        except Exception:
+            continue
+    dates.sort()
+
+    if dates[0] <= date_ and dates[-1] >= date_:
+        return False
+
+    return True
+
+
+def find_page_by_date(url: str, route: str, date: pd.Timestamp, last_page: int) -> int:
     logger.info("find page by date")
 
     page = 1
     if url == "https://www.timesnewroman.ro/":
         if check_first_page_tnr(url=url, route=route, date_=date):
-            last_page = find_last_page_tnr(url, route)
             page = binary_search(1, last_page, date, url + route)
     elif url == "https://www.digi24.ro/":
         if check_first_page_digi(url=url, route=route, date_=date):
-            last_page = find_last_page_digi(url, route)
             page = binary_search(1, last_page, date, url + route)
     elif url == "https://www.aktual24.ro/":
         if check_first_page_aktual(url=url, route=route, date_=date):
-            last_page = find_last_page_aktual(url, route)
+            page = binary_search(1, last_page, date, url + route)
+    elif url == "https://www.activenews.ro/":
+        if check_first_page_activenews(url=url, route=route, date_=date):
+            page = binary_search(1, last_page, date, url + route)
+    elif url == "https://infoalert.ro/":
+        if check_first_page_infoalert(url=url, route=route, date_=date):
+            page = binary_search(1, last_page, date, url + route)
+    elif url == "https://caplimpede.ro/":
+        if check_first_page_caplimpede(url=url, route=route, date_=date):
             page = binary_search(1, last_page, date, url + route)
     return page
 
@@ -316,6 +585,12 @@ def find_start_page(url: str, route: str) -> int:
         last_page = find_last_page_digi(url, route)
     elif url == "https://www.aktual24.ro/":
         last_page = find_last_page_aktual(url, route)
+    elif url == "https://www.activenews.ro/":
+        last_page = find_last_page_activenews(url, route)
+    elif url == "https://infoalert.ro/":
+        last_page = find_last_page_infoalert(url, route)
+    elif url == "https://caplimpede.ro/":
+        last_page = find_last_page_caplimpede(url, route)
 
     entry: Entry = Entry()
 
@@ -326,7 +601,7 @@ def find_start_page(url: str, route: str) -> int:
     if entry.site == "":
         return last_page
     else:
-        return find_page_by_date(url, route, entry.date)
+        return find_page_by_date(url, route, entry.date, last_page)
 
 
 def scrapper(url: str, route: str) -> None:
@@ -343,12 +618,19 @@ def scrapper(url: str, route: str) -> None:
     for page in range(start_page, 0, -1):
         logger.info(f"scrapping from page: {page}")
 
+        entries = []
         if url == "https://www.timesnewroman.ro/":
             entries = scrapper_logic_tnr(url, route, page, entry.date)
         elif url == "https://www.digi24.ro/":
             entries = scrapper_logic_digi(url, route, page, entry.date)
         elif url == "https://www.aktual24.ro/":
             entries = scrapper_logic_aktual(url, route, page, entry.date)
+        elif url == "https://www.activenews.ro/":
+            entries = scrapper_logic_activenews(url, route, page, entry.date)
+        elif url == "https://infoalert.ro/":
+            entries = scrapper_logic_infoalert(url, route, page, entry.date)
+        elif url == "https://caplimpede.ro/":
+            entries = scrapper_logic_caplimpede(url, route, page, entry.date)
         if entries == []:
             continue
         collection.insert_many([entry.dict() for entry in entries])

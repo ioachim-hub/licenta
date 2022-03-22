@@ -59,6 +59,45 @@
                 "category/money/",
                 "category/life/"
             ]
+        },
+        {
+            "type": "news",
+            "url": "https://www.activenews.ro/",
+            "routes": [
+                "stiri/",
+                "opinii/",
+                "covid/",
+                "externe/",
+                "cultura/",
+                "economie/",
+                "atitudine-civica/"
+            ]
+        },
+        {
+            "type": "news",
+            "url": "https://infoalert.ro/",
+            "routes": [
+                "category/stiri-din-romania/",
+                "category/stiri-de-pe-mapamond/",
+                "category/curiozitati-staiti-ca/",
+                "category/actualitate/",
+                "category/mistere-de-pe-mapamond/",
+                "category/sanatate-si-medicina/"
+            ]
+        },
+        {
+            "type": "news",
+            "url": "https://caplimpede.ro/",
+            "routes": [
+                "category/stiri-politica/",
+                "category/stirile-zilei/",
+                "category/stiri-sanatate-stiri-fitness-stiri-slabire/",
+                "category/stiri-politica/",
+                "category/stiri-internationale/",
+                "category/stirile-zilei/stiri-din-stiinta/",
+                "category/utile/",
+                "category/timp-liber/"
+            ]
         }
     ]
 }
