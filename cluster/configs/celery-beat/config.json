@@ -23,17 +23,20 @@
                 "life-death/",
                 "it-stiinta/",
                 "monden/"
-            ]
+            ],
+            "confidence": 0.25
         },
         {
             "type": "news",
             "url": "https://www.biziday.ro/",
-            "routes": []
+            "routes": [],
+            "confidence": 0.5
         },
         {
             "type": "rss",
             "url": "https://www.biziday.ro/feed",
-            "routes": []
+            "routes": [],
+            "confidence": 0.5
         },
         {
             "type": "news",
@@ -45,7 +48,8 @@
                 "stiri/externe",
                 "stiri/sport",
                 "stiri/sci-tech"
-            ]
+            ],
+            "confidence": 0.59
         },
         {
             "type": "news",
@@ -58,7 +62,8 @@
                 "category/externe/",
                 "category/money/",
                 "category/life/"
-            ]
+            ],
+            "confidence": 0.44
         },
         {
             "type": "news",
@@ -71,7 +76,8 @@
                 "cultura/",
                 "economie/",
                 "atitudine-civica/"
-            ]
+            ],
+            "confidence": 0.48
         },
         {
             "type": "news",
@@ -83,7 +89,8 @@
                 "category/actualitate/",
                 "category/mistere-de-pe-mapamond/",
                 "category/sanatate-si-medicina/"
-            ]
+            ],
+            "confidence": 0.35
         },
         {
             "type": "news",
@@ -97,7 +104,8 @@
                 "category/stirile-zilei/stiri-din-stiinta/",
                 "category/utile/",
                 "category/timp-liber/"
-            ]
+            ],
+            "confidence": 0.43
         }
     ]
 }
