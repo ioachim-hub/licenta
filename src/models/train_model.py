@@ -4,9 +4,8 @@ import pandas as pd
 import torch.nn as nn
 
 from sklearn import model_selection
-from sklearn import metrics
 from transformers import get_linear_schedule_with_warmup
-from torch.optim import Adadelta
+from torch.optim import AdamW
 
 import src.models.engine
 import src.models.config
@@ -68,7 +67,7 @@ def run():
     num_train_steps = int(
         len(df_train) / src.models.config.TRAIN_BATCH_SIZE * src.models.config.EPOCHS
     )
-    optimizer = Adadelta(optimizer_parameters, lr=3e-5)
+    optimizer = AdamW(optimizer_parameters, lr=src.models.config.LEARNING_RATE)
     scheduler = get_linear_schedule_with_warmup(
         optimizer, num_warmup_steps=0, num_training_steps=num_train_steps
     )
@@ -83,7 +82,7 @@ def run():
         print(f"Epoch: {epoch}")
         src.models.engine.train_fn(train_data_loader, model, optimizer, device, scheduler)
         outputs, targets = src.models.engine.eval_fn(valid_data_loader, model, device)
-        accuracy = metrics.accuracy_score(targets, outputs)
+        accuracy = src.models.engine.accuracy_score(targets, outputs)
         logging.info(f"Accuracy: {accuracy}")
         print(f"Accuracy Score = {accuracy}")
         if accuracy > best_accuracy:
