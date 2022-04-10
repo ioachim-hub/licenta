@@ -4,6 +4,7 @@ import pandas as pd
 import torch.nn as nn
 
 from sklearn import model_selection
+from sklearn.preprocessing import LabelEncoder
 from transformers import get_linear_schedule_with_warmup
 from torch.optim import AdamW
 
@@ -13,7 +14,11 @@ from src.models.model import FakeRoBERTModel
 from src.models.dataloader import FakeRoBERTDataset
 
 logging.basicConfig(
-    filename="app.log", filemode="w", format="%(name)s - %(levelname)s - %(message)s"
+    filename="logs.txt",
+    filemode='a',
+    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+    datefmt='%H:%M:%S',
+    level=logging.DEBUG
 )
 
 
@@ -23,7 +28,8 @@ def run():
     dfx = pd.read_parquet(src.models.config.TRAINING_FILE).fillna("none")
 
     logging.info("Splitting data...")
-    df_train, df_valid = model_selection.train_test_split(dfx, test_size=0.1, random_state=42)
+    df_train, df_valid = model_selection.train_test_split(
+        dfx, test_size=0.1, random_state=42)
 
     df_train = df_train.reset_index(drop=True)
     df_valid = df_valid.reset_index(drop=True)
@@ -65,7 +71,8 @@ def run():
     ]
 
     num_train_steps = int(
-        len(df_train) / src.models.config.TRAIN_BATCH_SIZE * src.models.config.EPOCHS
+        len(df_train) / src.models.config.TRAIN_BATCH_SIZE *
+        src.models.config.EPOCHS
     )
     optimizer = AdamW(optimizer_parameters, lr=src.models.config.LEARNING_RATE)
     scheduler = get_linear_schedule_with_warmup(
@@ -73,18 +80,21 @@ def run():
     )
 
     model = nn.DataParallel(model)
+    # model.load_state_dict(torch.load(src.models.config.MODEL_PATH))
 
     best_accuracy = 0
 
     logging.info("Training model...")
-    for epoch in range(src.models.config.EPOCHS):
+    for epoch in range(7, src.models.config.EPOCHS):
         logging.info(f"Starting epoch {epoch}...")
-        print(f"Epoch: {epoch}")
-        src.models.engine.train_fn(train_data_loader, model, optimizer, device, scheduler)
-        outputs, targets = src.models.engine.eval_fn(valid_data_loader, model, device)
+        logging.info(f"Epoch: {epoch}")
+        src.models.engine.train_fn(
+            train_data_loader, model, optimizer, device, scheduler)
+        outputs, targets = src.models.engine.eval_fn(
+            valid_data_loader, model, device)
         accuracy = src.models.engine.accuracy_score(targets, outputs)
         logging.info(f"Accuracy: {accuracy}")
-        print(f"Accuracy Score = {accuracy}")
+        logging.info(f"Accuracy Score = {accuracy}")
         if accuracy > best_accuracy:
             logging.info(f"New best accuracy! {accuracy}")
             torch.save(model.state_dict(), src.models.config.MODEL_PATH)
