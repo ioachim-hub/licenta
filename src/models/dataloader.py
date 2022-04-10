@@ -12,6 +12,7 @@ class FakeRoBERTDataset(Dataset):
         self.df = df
         self.df = self.df.dropna()
         self.df = self.df[[column, "label"]]
+        
 
     def __len__(self):
         return len(self.df)

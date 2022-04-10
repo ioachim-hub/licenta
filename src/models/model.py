@@ -10,7 +10,8 @@ class FakeRoBERTModel(nn.Module):
     def __init__(self):
         super(FakeRoBERTModel, self).__init__()
         # embedding
-        self.bert = transformers.AutoModel.from_pretrained(src.models.config.BERT_PATH)
+        self.bert = transformers.AutoModel.from_pretrained(
+            src.models.config.BERT_PATH)
 
         # first convolutional layers
         self.conv1_2 = nn.Conv1d(768, 512, kernel_size=1, stride=1, padding=0)
@@ -55,8 +56,8 @@ class FakeRoBERTModel(nn.Module):
         # x = self.dense1_8(x)
 
         x = self.drop1_6(pooled_output)
-        x = self.dense_1(x)
-        x = self.dense_3(x)
+        x = self.drop1_5(self.dense_1(x))
+        x = self.drop1_3(self.dense_3(x))
         x = self.dense_4(x)
         x = torch.sigmoid(x)
 
