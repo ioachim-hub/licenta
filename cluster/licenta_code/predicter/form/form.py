@@ -12,4 +12,6 @@ class ArticleForm(django.forms.Form):
 class mongoForm(pydantic.BaseModel):
     title: str
     article: str
-    label: int  # 1 true, 0 fake
+    title_score: float
+    content_score: float
+    label: float  # 80% content_score + 20% title_score

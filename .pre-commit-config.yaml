@@ -1,20 +1,20 @@
 repos:
     - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v2.3.0
+      rev: v4.2.0
       hooks:
           - id: check-yaml
             exclude: ^cluster/charts/
           - id: end-of-file-fixer
           - id: trailing-whitespace
     - repo: https://github.com/psf/black
-      rev: 21.12b0
+      rev: 22.3.0
       hooks:
           - id: black
     - repo: https://github.com/pre-commit/mirrors-mypy
-      rev: "" # Use the sha / tag you want to point at
+      rev: "v0.942" # Use the sha / tag you want to point at
       hooks:
           - id: mypy
     - repo: https://github.com/pycqa/flake8
-      rev: "" # pick a git hash / tag to point to
+      rev: "4.0.1" # pick a git hash / tag to point to
       hooks:
           - id: flake8
