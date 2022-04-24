@@ -1,61 +1,281 @@
 <!DOCTYPE html>
 <html>
-<style>
-    div {
-        margin: 0;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
+  {% load static %}
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+    />
+    <title>Fake news predicter</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{% static '/img/favicon.ico' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static '/bootstrap/css/bootstrap.min.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Montserrat:400,700"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Kaushan+Script"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700"
+    />
+    <link rel="stylesheet" href="{% static '/fonts/font-awesome.min.css' %}" />
+    <link rel="stylesheet" href="{% static '/css/Login-Form-Dark.css' %}" />
+    <link
+      rel="stylesheet"
+      href="{% static '/css/Registration-Form-with-Photo.css' %}"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  </head>
 
-    img {
-        display: table;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    form {
-        display: table;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    p {
-        display: table-row;
-    }
-
-    label {
-        display: table-cell;
-        width: auto;
-    }
-
-    input {
-        display: table-cell;
-        width: 100%;
-    }
-
-    textarea {
-        display: table-cell;
-        width: 100%;
-    }
-</style>
-
-<div>
-    <h1 style="text-align: center;">Fake News Predicter</h1>
-    <form action="upload" method="post">{% csrf_token %}
-        <p>
-            <label for="title">Title: </label>
-            <br>
-            <input id="title" type="text" name="title">
-        </p>
-        <p>
-            <label for="article">Article: </label>
-            <br>
-            <textarea id="article" type="text" name="article" rows="10" cols="100"></textarea>
-        </p>
-        <input type="submit" value="Send">
-    </form>
-</div>
-
+  <body id="page-top">
+    <header
+      class="masthead"
+      style="color: var(--gray-dark); background: var(--gray-dark)"
+    >
+      <div id="top" class="intro-text">
+        <h1
+          style="
+            color: var(--white);
+            margin-top: -150px;
+            font-size: 50px;
+            margin-bottom: 76px;
+          "
+        >
+          FAKE NEWS PREDICTER
+        </h1>
+        <div
+          class="text-center d-xl-flex flex-fill justify-content-xl-center align-items-xl-center"
+          id="create"
+          style="margin-top: 149px; border-color: var(--dark)"
+        >
+          <div class="col-lg-8 mx-auto" style="padding-top: 92px">
+            <h2 class="text-uppercase" style="color: var(--white)">
+              Insert news
+            </h2>
+            <form
+              method="post"
+              action="upload"
+              style="
+                border-radius: 13px;
+                border-style: solid;
+                border-color: var(--white);
+              "
+            >
+              {% csrf_token %}
+              <div class="form-group">
+                <input
+                  class="form-control"
+                  id="link"
+                  type="text"
+                  name="link"
+                  placeholder="Link"
+                  style="margin: 0px"
+                  onchange="check()"
+                />
+              </div>
+              <h3 style="color: var(--white)">OR</h3>
+              <div class="form-group">
+                <input
+                  class="form-control"
+                  id="title"
+                  type="text"
+                  name="title"
+                  placeholder="Title"
+                  style="margin: 0px"
+                  onchange="check()"
+                />
+              </div>
+              <div class="form-group">
+                <textarea
+                  class="form-control"
+                  name="content"
+                  placeholder="Content"
+                  rows="5"
+                  id="content"
+                ></textarea>
+              </div>
+              <div class="form-group">
+                <button
+                  class="btn btn-primary btn-block"
+                  type="submit"
+                  id="submit"
+                  disabled
+                  style="
+                    background: var(--white);
+                    border-color: var(--white);
+                    color: var(--gray-dark);
+                  "
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="intro-lead-in"></div>
+        <div class="intro-heading text-uppercase"></div>
+      </div>
+    </header>
+    <section id="projects">
+      <h2
+        class="text-uppercase"
+        style="
+          color: var(--gray-dark);
+          border-color: var(--gray-dark);
+          text-align: center;
+        "
+      >
+        Last 25 inserted articles
+      </h2>
+      <div
+        class="container"
+        style="align-items: center; max-width: fit-content"
+      >
+        <div class="row" style="width: fit-content; align-content: center">
+          <div class="col-lg-12 text-center">
+            <div
+              class="table-responsive"
+              style="border-style: none; align-content: center"
+            >
+              <table class="table">
+                <thead style="border-style: solid">
+                  <tr style="border-style: solid; border-color: rgb(0, 0, 0)">
+                    <th style="width: 40px; vertical-align: middle">ID</th>
+                    <th
+                      style="
+                        border-style: solid;
+                        border-color: rgb(0, 0, 0);
+                        width: 350px;
+                        vertical-align: middle;
+                      "
+                    >
+                      TITLE
+                    </th>
+                    <th
+                      style="
+                        border-style: solid;
+                        border-color: rgb(0, 0, 0);
+                        width: 520px;
+                        vertical-align: middle;
+                      "
+                    >
+                      CONTENT
+                    </th>
+                    <th
+                      style="
+                        border-style: solid;
+                        border-color: rgb(0, 0, 0);
+                        width: 120px;
+                        vertical-align: middle;
+                      "
+                    >
+                      TITLE CONFIDENCE SCORE
+                    </th>
+                    <th
+                      style="
+                        border-style: solid;
+                        border-color: rgb(0, 0, 0);
+                        width: 120px;
+                        vertical-align: middle;
+                      "
+                    >
+                      CONTENT CONFIDENCE SCORE
+                    </th>
+                    <th
+                      style="
+                        border-style: solid;
+                        border-color: rgb(0, 0, 0);
+                        width: 120px;
+                        vertical-align: middle;
+                      "
+                    >
+                      LABEL
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for i in result %}
+                  <tr>
+                    <td class="cell-border">{{ forloop.counter }}</td>
+                    <td class="cell-border">
+                      <a href="/news/{{ i.uuid }}/">{{ i.title|truncatechars:100 }}</a>
+                    </td>
+                    <td class="cell-border">{{ i.content|truncatechars:150 }}</td>
+                    <td class="cell-border">
+                      {{ i.title_score|floatformat:2 }}
+                    </td>
+                    <td class="cell-border">
+                      {{ i.content_score|floatformat:2 }}
+                    </td>
+                    <td class="cell-border">{{ i.label|floatformat:2 }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section style="background: var(--gray-dark)"></section>
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <span class="copyright">Copyright&nbsp;© Lihor 2022</span>
+          </div>
+          <div class="col-md-4">
+            <ul class="list-inline social-buttons">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/IoachimLihor" target="_blank"
+                  ><i class="fa fa-twitter"></i
+                ></a>
+              </li>
+              <li class="list-inline-item">
+                <a
+                  href="https://www.facebook.com/profile.php?id=100009397325432"
+                  target="_blank"
+                  ><i class="fa fa-facebook"></i
+                ></a>
+              </li>
+              <li class="list-inline-item">
+                <a
+                  href="https://www.linkedin.com/in/ioachim-lihor-61b528187/"
+                  target="_blank"
+                  ><i class="fa fa-linkedin"></i
+                ></a>
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <ul class="list-inline quicklinks">
+              <li class="list-inline-item"></li>
+              <li class="list-inline-item"></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script src="{% static '/js/jquery.min.js' %}"></script>
+    <script src="{% static '/js/js_check.js' %}"></script>
+    <script src="{% static '/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="{% static '/js/agency.js' %}"></script>
+  </body>
 </html>
