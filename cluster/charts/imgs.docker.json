@@ -186,5 +186,16 @@
             "dockerfile": "docker/celery-completer/Dockerfile",
             "context": "./"
         }
+    },
+    {
+        "name": "celery-similarity",
+        "tag": [
+            "1.0.0"
+        ],
+        "force": true,
+        "build": {
+            "dockerfile": "docker/celery-similarity/Dockerfile",
+            "context": "./"
+        }
     }
 ]

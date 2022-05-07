@@ -12,6 +12,8 @@ from licenta_code.celery.common import (
     CELERY_COMPLETER_TASK,
     CELERY_SEARCHER_QUEUE,
     CELERY_COMPLETER_QUEUE,
+    CELERY_SIMILARITY_TASK,
+    CELERY_SIMILARITY_QUEUE,
 )
 
 from licenta_code.celery_beat.celery_app import app, cfg
@@ -46,6 +48,15 @@ def setup_periodic_tasks(
         CELERY_SEARCHER_TASK,
         kwargs={},
         queue=CELERY_SEARCHER_QUEUE,
+        expires=expires,
+        immutable=True,
+    )
+    sender.add_periodic_task(60, req)
+
+    req = celery.signature(
+        CELERY_SIMILARITY_TASK,
+        kwargs={},
+        queue=CELERY_SIMILARITY_QUEUE,
         expires=expires,
         immutable=True,
     )

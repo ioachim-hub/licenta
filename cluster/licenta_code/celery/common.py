@@ -6,6 +6,7 @@ import pydantic
 CELERY_SCRAPP_QUEUE = "scrapp"
 CELERY_SEARCHER_QUEUE = "searcher"
 CELERY_COMPLETER_QUEUE = "completer"
+CELERY_SIMILARITY_QUEUE = "similarity"
 
 CELERY_RSS_TASK = "rss"
 CELERY_FILL_TASK = "fill"
@@ -13,6 +14,7 @@ CELERY_SCRAPP_TASK = "scrapp"
 CELERY_SEARCH_TASK = "search"
 CELERY_SEARCHER_TASK = "searcher"
 CELERY_COMPLETER_TASK = "completer"
+CELERY_SIMILARITY_TASK = "similarity"
 
 
 class CeleryConfig(pydantic.BaseModel):

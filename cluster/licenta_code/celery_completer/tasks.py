@@ -69,6 +69,12 @@ def extract_from_news(url: str) -> NewsInfo:
     if url.split(".")[-1] in ["pdf", "doc", "docx"]:
         return NewsInfo("", "")
 
+    if url.split(".")[-1] in ["jpg", "jpeg", "png"]:
+        return NewsInfo("", "")
+
+    if ".pdf" in url:
+        return NewsInfo("", "")
+
     session = requests_html.HTMLSession()
     data = session.get(url, timeout=10)
 
@@ -110,7 +116,7 @@ def complete():
                     {
                         "$set": {
                             f"alike_news.{index}.title": extract.title,
-                            f"alike_news.{index}.text": extract.content[:1000],
+                            f"alike_news.{index}.text": extract.content,
                         }
                     },
                 )

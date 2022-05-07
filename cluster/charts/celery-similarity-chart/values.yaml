@@ -1,0 +1,32 @@
+name: celery-similarity
+
+image:
+  name: "celery-similarity"
+  tag: 1.0.0
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+antiaffinity: ""
+
+app:
+  loglevel: "INFO"
+  concurrency: 1
+  prefetchmultiplier: 1
+  queues: "similarity"
+  name: "celery_similarity"
+
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 60
+  periodSeconds: 300
+  timeoutSeconds: 300
+  failureThreshold: 2
+  successThreshold: 1
+
+config:
+  celery: {}
+  mongodb: {}
+
+resources:
+  limits: {}
+  requests: {}
