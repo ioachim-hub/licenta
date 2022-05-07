@@ -1,10 +1,10 @@
 {
-    "repo_url": "srp.minikube.com:5000",
+    "repo_url": "registry.digitalocean.com/licenta-registry",
     "push": true,
     "pull_skip_if_exists": true,
     "save": false,
     "environment": "generic",
-    "backend": "podman",
+    "backend": "docker",
     "skopeo_config": {
       "dest_compress_format": null,
       "debug": false,

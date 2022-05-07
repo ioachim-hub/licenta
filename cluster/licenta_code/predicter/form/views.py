@@ -74,7 +74,7 @@ def upload(request: django.http.HttpRequest):
                 content = cleaner.map_dataframe(content, 0, 0.2, 0.2)[0]
                 outputs_content = predict(
                     text=content,
-                    model=model_title,
+                    model=model_content,
                     tokenizer=TOKENIZER,
                     scaler=scaler,
                     device=device,

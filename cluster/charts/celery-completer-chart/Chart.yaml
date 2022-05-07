@@ -1,0 +1,6 @@
+apiVersion: v2
+name: celery-completer-chart
+description: celery-completer
+
+version: 1.0.0
+appVersion: 1.0.0

@@ -8,10 +8,10 @@ image:
 
 ingress:
     enabled: false
-    hostname: restapi.aa.minikube.com
+    hostname: licenta.lihor.ro
 
 service:
-    port: 80
+    port: 8080
 
 nodeSelector:
     enabled: false

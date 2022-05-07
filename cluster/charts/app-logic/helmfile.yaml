@@ -70,7 +70,7 @@ releases:
         pullPolicy: Always
     - ingress:
         enabled: true
-        hostname: {{ tpl "predicter.aa.{{ $.Values.environment_name }}.com" . }}
+        hostname: {{ tpl "licenta.lihor.ro" . }}
 
   - name: celery-beat
     chart: ../celery-beat-chart
@@ -92,6 +92,33 @@ releases:
     values:
     - image:
         name: "{{ .Values.minikube }}/celery-scrapper"
+        tag: "1.0.0"
+        pullPolicy: Always
+    - config:
+        celery: {{- toYaml $.Values.celery | nindent 10 }}
+        mongodb: {{- toYaml $.Values.mongodb | nindent 10 }}
+        redis: {{- toYaml $.Values.redis | nindent 10 }}
+
+
+  - name: celery-searcher
+    chart: ../celery-searcher-chart
+    namespace: default
+    values:
+    - image:
+        name: "{{ .Values.minikube }}/celery-searcher"
+        tag: "1.0.0"
+        pullPolicy: Always
+    - config:
+        celery: {{- toYaml $.Values.celery | nindent 10 }}
+        mongodb: {{- toYaml $.Values.mongodb | nindent 10 }}
+        redis: {{- toYaml $.Values.redis | nindent 10 }}
+
+  - name: celery-completer
+    chart: ../celery-completer-chart
+    namespace: default
+    values:
+    - image:
+        name: "{{ .Values.minikube }}/celery-completer"
         tag: "1.0.0"
         pullPolicy: Always
     - config:

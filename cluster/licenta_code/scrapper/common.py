@@ -26,8 +26,27 @@ def driver_config() -> Options:
     return options
 
 
+def driver_config_head() -> Options:
+    options = Options()
+    options.add_argument("start-maximized")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    chrome_prefs: dict[str, dict[str, int]] = {}
+    options.experimental_options["prefs"] = chrome_prefs
+    chrome_prefs["profile.default_content_settings"] = {"images": 2}
+    return options
+
+
 def get_driver() -> webdriver.Chrome:
     options = driver_config()
+    driver = webdriver.Chrome(
+        executable_path=ChromeDriverManager().install(), options=options
+    )
+    return driver
+
+
+def get_driver_head() -> webdriver.Chrome:
+    options = driver_config_head()
     driver = webdriver.Chrome(
         executable_path=ChromeDriverManager().install(), options=options
     )

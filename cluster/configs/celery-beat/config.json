@@ -1,12 +1,12 @@
 {
     "mongodb": {
-        "host": "mongodb",
+        "host": "localhost",
         "port": 27017,
         "username": "root",
         "password": "ikkgIzSjBW"
     },
     "celery": {
-        "broker_url": "pyamqp://admin:3oUb5ZlIIm@rabbitmq:5672//",
+        "broker_url": "pyamqp://admin:3oUb5ZlIIm@localhost:5672//",
         "expires_multiplier": 1.1,
         "task_ignore_result": false,
         "task_store_errors_even_if_ignored": true,
