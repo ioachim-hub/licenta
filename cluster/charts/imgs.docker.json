@@ -164,5 +164,27 @@
             "dockerfile": "docker/celery-scrapper/Dockerfile",
             "context": "./"
         }
+    },
+    {
+        "name": "celery-searcher",
+        "tag": [
+            "1.0.0"
+        ],
+        "force": true,
+        "build": {
+            "dockerfile": "docker/celery-searcher/Dockerfile",
+            "context": "./"
+        }
+    },
+    {
+        "name": "celery-completer",
+        "tag": [
+            "1.0.0"
+        ],
+        "force": true,
+        "build": {
+            "dockerfile": "docker/celery-completer/Dockerfile",
+            "context": "./"
+        }
     }
 ]

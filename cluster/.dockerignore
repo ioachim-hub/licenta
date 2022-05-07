@@ -1,0 +1,11 @@
+.vscode/
+
+.git/
+.gitignore
+
+__pycache__
+
+**/*.bin
+**/*.pkl
+
+licenta_code/predicter/**/*

@@ -5,7 +5,6 @@ USER root
 COPY ./licenta_code /opt/licenta_code
 RUN chmod 777 /opt/licenta_code
 
-RUN rm -rf /opt/licenta_code/predicter/
 
 # https://gist.github.com/varyonic/dea40abcf3dd891d204ef235c6e8dd79
 RUN apt-get update -y
@@ -19,12 +18,11 @@ RUN pip3 install --no-cache-dir -U pip
 
 RUN pip3 install --no-cache-dir -U setuptools
 
-COPY requirements-celery-scrapper.txt /tmp/requirements.txt
+COPY requirements-celery-searcher.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
+RUN python -m spacy download ro_core_news_sm
 
-RUN apt-get install xvfb
-
-COPY ./docker/celery-scrapper/docker-entrypoint.sh /opt/docker-entrypoint.sh
+COPY ./docker/celery-searcher/docker-entrypoint.sh /opt/docker-entrypoint.sh
 
 ENV PYTHONUNBUFFERED=1 PYTHONOPTIMIZE=0 PYTHONDONTWRITEBYTECODE=1
 
@@ -51,7 +49,9 @@ ENV PYTHONUNBUFFERED=1 PYTHONOPTIMIZE=0 PYTHONDONTWRITEBYTECODE=1
 
 # EXPOSE 4444
 
-# https://nander.cc/using-selenium-within-a-docker-container
+
+RUN apt-get install xvfb
+
 # Adding trusting keys to apt for repositories
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
 
@@ -64,18 +64,9 @@ RUN apt-get -y update
 # Magic happens
 RUN apt-get install -y google-chrome-stable
 
-# Installing Unzip
-RUN apt-get install -yqq unzip
-
-# Download the Chrome Driver
-RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip
-
-# Unzip the Chrome Driver into /usr/local/bin directory
-RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
-
+# Set display port as an environment variable
 RUN chmod 777 /root/
 
-# Set display port as an environment variable
 ENV DISPLAY=:99
 
 ENTRYPOINT ["/opt/docker-entrypoint.sh"]

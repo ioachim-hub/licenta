@@ -13,6 +13,6 @@ COPY ./docker/predicter/docker-entrypoint.sh /opt/docker-entrypoint.sh
 ENV PYTHONUNBUFFERED=1 PYTHONOPTIMIZE=0 PYTHONDONTWRITEBYTECODE=1
 
 WORKDIR /opt/predicter
-EXPOSE 80
+EXPOSE 8080
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:80"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8080"]

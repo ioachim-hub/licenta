@@ -87,7 +87,7 @@ class Config(pydantic.BaseModel):
     backend: Backend
     pull_skip_if_exists: bool
     push: bool
-    pusher: str = "skopeo"
+    pusher: str = "backend"  # "skopeo"
 
     save: bool
     save_dir: str = "/tmp"
@@ -163,7 +163,10 @@ class BuildInstruction(Instruction):
         uri = f"{self.name}:{self.tag}"
 
         if self.backend == Backend.PODMAN:
-            cmd = f"{self.backend} build --disable-compression=false -f {self.dockerfile_path} -t {uri} {self.context_path}"
+            cmd = (
+                f"{self.backend} build --disable-compression=false "
+                + "-f {self.dockerfile_path} -t {uri} {self.context_path}"
+            )
         elif self.backend == Backend.DOCKER:
             cmd = f"{self.backend} build -f {self.dockerfile_path} -t {uri} {self.context_path}"
         else:

@@ -25,7 +25,13 @@ SECRET_KEY = "django-insecure-l=p=mbn2#*%u1+9k42bn-(6m2+9-(oyc)z&!eya@#1)@6pon9=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["predicter.aa.minikube.com", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = [
+    "predicter.aa.minikube.com",
+    "127.0.0.1",
+    "localhost",
+    "licenta.lihor.ro",
+    "cloud.digitalocean.com",
+]
 
 
 # Application definition
