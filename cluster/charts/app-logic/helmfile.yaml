@@ -125,3 +125,16 @@ releases:
         celery: {{- toYaml $.Values.celery | nindent 10 }}
         mongodb: {{- toYaml $.Values.mongodb | nindent 10 }}
         redis: {{- toYaml $.Values.redis | nindent 10 }}
+
+  - name: celery-similarity
+    chart: ../celery-similarity-chart
+    namespace: default
+    values:
+    - image:
+        name: "{{ .Values.minikube }}/celery-similarity"
+        tag: "1.0.0"
+        pullPolicy: Always
+    - config:
+        celery: {{- toYaml $.Values.celery | nindent 10 }}
+        mongodb: {{- toYaml $.Values.mongodb | nindent 10 }}
+        redis: {{- toYaml $.Values.redis | nindent 10 }}

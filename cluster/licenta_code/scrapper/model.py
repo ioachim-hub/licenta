@@ -27,8 +27,12 @@ class SearchedNews(pydantic.BaseModel):
     meta: str = ""
     title: str = ""
     is_similar: bool = False
+    similarity_title: Optional[float] = None
+    similarity_content: Optional[float] = None
     similarity_score_title: Optional[float] = None
     similarity_score_content: Optional[float] = None
+    has_similar_title: bool = False
+    has_similar_content: bool = False
 
 
 class Entry(pydantic.BaseModel):

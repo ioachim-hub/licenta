@@ -1,0 +1,6 @@
+apiVersion: v2
+name: celery-similarity-chart
+description: celery-similarity
+
+version: 1.0.0
+appVersion: 1.0.0
