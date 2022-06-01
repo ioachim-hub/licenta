@@ -6,7 +6,8 @@ DOCKER_IO: "docker.io"
 K8S_GCR_IO: "k8s.gcr.io"
 GHCR_IO: "ghcr.io"
 QUAY_IO: "quay.io"
-minikube: "registry.digitalocean.com/licenta-registry"
+# minikube: "registry.digitalocean.com/licenta-registry"
+minikube: "srp.minikube.com:5000"
 
 SMTP_FROM_ADDRESS: "ioachim.lihor@gmail.com"
 
