@@ -38,7 +38,7 @@ spec:
       - name: "celeryworker"
         image: "{{ .Values.image.name }}:{{ .Values.image.tag }}"
         imagePullPolicy: "{{ .Values.image.pullPolicy }}"
-        args: ["--app", "licenta_code.{{ .Values.app.name }}.celery_app.app",
+        args: ["--app", "fakepred.{{ .Values.app.name }}.celery_app.app",
               "worker",
               "--loglevel", "{{ .Values.app.loglevel }}",
               "--pool", "prefork",

@@ -2,8 +2,8 @@ FROM docker.io/python:3.10.2-bullseye
 
 USER root
 
-COPY ./licenta_code /opt/licenta_code
-RUN chmod 777 /opt/licenta_code
+COPY ./fakepred /opt/fakepred
+RUN chmod 777 /opt/fakepred
 
 
 # https://gist.github.com/varyonic/dea40abcf3dd891d204ef235c6e8dd79

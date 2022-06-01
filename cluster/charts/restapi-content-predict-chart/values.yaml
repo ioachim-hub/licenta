@@ -1,0 +1,23 @@
+name: restapi-content-predict
+
+image:
+  name: "radcom/restapi-content-predict"
+  tag: "1.0.0"
+  pullPolicy: "Always"
+
+replicaCount: 1
+
+ingress:
+  enabled: false
+  hostname: restapi-content-predict.aa.minikube.radcom.com
+
+service:
+  port: 80
+
+nodeSelector:
+  enabled: false
+  hostname: "machine-hostname"
+
+config:
+  environment: "minikube"
+  listen: {}

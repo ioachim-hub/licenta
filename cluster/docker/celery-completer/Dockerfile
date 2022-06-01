@@ -2,8 +2,8 @@ FROM docker.io/python:3.10.2-bullseye
 
 USER root
 
-COPY ./licenta_code /opt/licenta_code
-RUN chmod 777 /opt/licenta_code
+COPY ./fakepred /opt/fakepred
+RUN chmod 777 /opt/fakepred
 
 #Upgrade pip
 RUN pip3 install --no-cache-dir -U pip
