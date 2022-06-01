@@ -75,10 +75,23 @@
                 border-radius: 13px;
                 border-style: solid;
                 border-color: var(--white);
+                max-width: 100%;
               "
             >
               {% csrf_token %}
               <div class="form-group">
+                {% if result.form %}
+                <input
+                  class="form-control"
+                  id="link"
+                  type="text"
+                  name="link"
+                  placeholder="Link"
+                  style="margin: 0px"
+                  disabled="true"
+                  value="{{ result.form.link }}"
+                />
+                {% else %}
                 <input
                   class="form-control"
                   id="link"
@@ -88,9 +101,26 @@
                   style="margin: 0px"
                   onchange="check()"
                 />
+                {% endif %}
               </div>
               <h3 style="color: var(--white)">OR</h3>
               <div class="form-group">
+                {% if result.form %}
+                <input
+                  class="form-control"
+                  id="title"
+                  type="text"
+                  name="title"
+                  placeholder="Title"
+                  value="{{ result.form.title }}"
+                  width="100%"
+                  style="
+                    margin: 0px;
+                    word-wrap: break-word;
+                    word-break: break-all;
+                  "
+                />
+                {% else %}
                 <input
                   class="form-control"
                   id="title"
@@ -100,17 +130,46 @@
                   style="margin: 0px"
                   onchange="check()"
                 />
+                {% endif %}
               </div>
               <div class="form-group">
+                {% if result.form %}
+                <textarea
+                  class="form-control"
+                  id="content"
+                  name="content"
+                  placeholder="Text"
+                  style="margin: 0px"
+                  rows="15"
+                  wrap="soft"
+                >
+{{ result.form.content }}
+                </textarea>
+                {% else %}
                 <textarea
                   class="form-control"
                   name="content"
                   placeholder="Content"
-                  rows="5"
+                  rows="15"
                   id="content"
                 ></textarea>
+                {% endif %}
               </div>
               <div class="form-group">
+                {% if result.form %}
+                <button
+                  class="btn btn-primary btn-block"
+                  type="submit"
+                  id="submit"
+                  style="
+                    background: var(--white);
+                    border-color: var(--white);
+                    color: var(--gray-dark);
+                  "
+                >
+                  Submit
+                </button>
+                {% else %}
                 <button
                   class="btn btn-primary btn-block"
                   type="submit"
@@ -124,6 +183,7 @@
                 >
                   Submit
                 </button>
+                {% endif %}
               </div>
             </form>
           </div>
@@ -210,13 +270,17 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for i in result %}
+                  {% for i in result.news_list %}
                   <tr>
                     <td class="cell-border">{{ forloop.counter }}</td>
                     <td class="cell-border">
-                      <a href="/news/{{ i.uuid }}/">{{ i.title|truncatechars:100 }}</a>
+                      <a href="/news/{{ i.uuid }}/"
+                        >{{ i.title|truncatechars:100 }}</a
+                      >
                     </td>
-                    <td class="cell-border">{{ i.content|truncatechars:150 }}</td>
+                    <td class="cell-border">
+                      {{ i.content|truncatechars:150 }}
+                    </td>
                     <td class="cell-border">
                       {{ i.title_score|floatformat:2 }}
                     </td>

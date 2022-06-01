@@ -1,18 +1,29 @@
+from typing import Optional
+
+import datetime
+import dataclasses
+
 import django
 import django.shortcuts
 
 
-from form.form import ArticleForm, MONGODB_NEWS_COLLECTION_NAME, mongoForm
+from form.form import ArticleForm, MONGODB_NEWS_COLLECTION_NAME, MongoForm
 from utils import dbHandler
 from model.predict import predict
-from model.common import scaler, model_title, model_content, device, TOKENIZER
+from model.common import (
+    model_title,
+    model_content,
+    device,
+    TOKENIZER,
+    extract_from_news,
+    NewsInfo,
+)
 from cleaner.model import Cleaner
 
 TOKENIZER = TOKENIZER
 device = device
 model_title = model_title
 model_content = model_content
-scaler = scaler
 
 cleaner = Cleaner()
 
@@ -26,14 +37,21 @@ db = dbHandler(
 )
 
 
+@dataclasses.dataclass
+class Response:
+    news_list: list[MongoForm] = dataclasses.field(default_factory=list)
+    form: Optional[NewsInfo] = None
+
+
 def index(request: django.http.HttpRequest):
     collection = db.get_db_handle()[MONGODB_NEWS_COLLECTION_NAME]
     news = collection.find().limit(25).sort("uuid", -1)
     news_list = []
     for new in news:
-        news_list.append(mongoForm.parse_obj(new))
+        news_list.append(MongoForm.parse_obj(new))
+    response: Response = Response(news_list=news_list)
     return django.shortcuts.render(
-        request, "form/index.html", context={"result": news_list}
+        request, "form/index.html", context={"result": response}
     )
 
 
@@ -43,9 +61,10 @@ def upload(request: django.http.HttpRequest):
     news = collection.find().limit(25).sort("uuid", -1)
     news_list = []
     for new in news:
-        news_list.append(mongoForm.parse_obj(new))
+        news_list.append(MongoForm.parse_obj(new))
     print(news_list)
     form = ArticleForm()
+    response: Response = Response(news_list=news_list)
 
     uuid = 1
     if len(news_list) > 0:
@@ -56,51 +75,70 @@ def upload(request: django.http.HttpRequest):
         form = ArticleForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
-            outputs_title: float = 0.5
-            outputs_content: float = 0.5
+            if (
+                form.cleaned_data.get("title") != ""
+                and form.cleaned_data.get("content") != ""
+            ):
+                link = form.cleaned_data.get("link")
 
-            title = form.cleaned_data.get("title")
-            if title is not None:
-                title = cleaner.map_dataframe(title, 0, 0.2, 0.2)[0]
-                outputs_title = predict(
-                    text=title,
-                    model=model_title,
-                    tokenizer=TOKENIZER,
-                    scaler=scaler,
-                    device=device,
-                )[0][0]
-            content = form.cleaned_data.get("content")
-            if content is not None:
-                content = cleaner.map_dataframe(content, 0, 0.2, 0.2)[0]
-                outputs_content = predict(
-                    text=content,
-                    model=model_content,
-                    tokenizer=TOKENIZER,
-                    scaler=scaler,
-                    device=device,
-                )[0][0]
+                outputs_title: float = 0.5
+                outputs_content: float = 0.5
 
-            label = 80 * outputs_content / 100 + 20 * outputs_title / 100
-            entry = mongoForm(
-                uuid=uuid,
-                title=form.cleaned_data.get("title"),
-                content=form.cleaned_data.get("content"),
-                title_score=outputs_title,
-                content_score=outputs_content,
-                label=label,
-            )
+                title = form.cleaned_data.get("title")
+                if title is not None:
+                    title = cleaner.map_dataframe(title, 0, 0.2, 0.2)[0]
+                    outputs_title = predict(
+                        text=title,
+                        model=model_title,
+                        tokenizer=TOKENIZER,
+                        device=device,
+                    )[0][0]
+                content = form.cleaned_data.get("content")
+                if content is not None:
+                    content = cleaner.map_dataframe(content, 0, 0.2, 0.2)[0]
+                    outputs_content = predict(
+                        text=content,
+                        model=model_content,
+                        tokenizer=TOKENIZER,
+                        device=device,
+                    )[0][0]
 
-            try:
-                collection.insert_one(entry.dict())
-            except Exception:
-                return django.http.HttpResponseRedirect("error")
+                label = 80 * outputs_content / 100 + 20 * outputs_title / 100
+                entry = MongoForm(
+                    uuid=uuid,
+                    title=form.cleaned_data.get("title"),
+                    content=form.cleaned_data.get("content"),
+                    title_score=outputs_title,
+                    content_score=outputs_content,
+                    label=label,
+                    link=link,
+                    date=datetime.datetime.now(),
+                )
 
-            return django.shortcuts.render(
-                request, "form/response.html", context={"result": entry}
-            )
+                try:
+                    collection.insert_one(entry.dict())
+                except Exception:
+                    return django.http.HttpResponseRedirect("error")
+
+                return django.shortcuts.render(
+                    request, "form/news.html", context={"result": entry}
+                )
+            else:
+                try:
+                    news_info: NewsInfo = extract_from_news(
+                        form.cleaned_data.get("link")
+                    )
+                except Exception:
+                    return django.http.HttpResponseRedirect("error")
+                response.form = news_info
+                return django.shortcuts.render(
+                    request,
+                    "form/index.html",
+                    context={"form": form, "result": response},
+                )
 
     return django.shortcuts.render(
-        request, "form/index.html", context={"form": form, "result": news_list}
+        request, "form/index.html", context={"form": form, "result": response}
     )
 
 
@@ -116,7 +154,7 @@ def news(request: django.http.HttpRequest):
     news = collection.find().limit(25)
     news_list = []
     for new in news:
-        news_list.append(mongoForm.parse_obj(new))
+        news_list.append(MongoForm.parse_obj(new))
 
     print(news_list)
     context = {"result": news_list}
@@ -129,7 +167,7 @@ def view_news(request: django.http.HttpRequest, id: int):
     collection = db_handle[MONGODB_NEWS_COLLECTION_NAME]
 
     news = collection.find_one({"uuid": id})
-    news_ = mongoForm.parse_obj(news)
+    news_ = MongoForm.parse_obj(news)
 
     print(news_)
     context = {"result": news_}

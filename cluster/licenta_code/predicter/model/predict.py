@@ -1,7 +1,6 @@
 import torch
 import transformers
 
-from sklearn import preprocessing
 from model.model import FakeRoBERTModel
 
 
@@ -9,10 +8,9 @@ def predict(
     text: str,
     model: FakeRoBERTModel,
     tokenizer: transformers.BertTokenizer,
-    scaler: preprocessing.MinMaxScaler,
     device: torch.device,
     max_len: int = 512,
-):
+) -> float:
     model.eval()
     with torch.no_grad():
         encoded_text = tokenizer.encode_plus(
@@ -47,4 +45,4 @@ def predict(
         )
 
     output = output.cpu().detach().numpy()
-    return scaler.inverse_transform(output)
+    return output
