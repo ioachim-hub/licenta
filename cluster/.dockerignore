@@ -8,5 +8,5 @@ __pycache__
 **/*.bin
 **/*.pkl
 
-licenta_code/predicter/model/**/*
-licenta_code/predicter/train_models/**/*
+fakepred/predicter/model/**/*
+fakepred/predicter/train_models/**/*

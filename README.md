@@ -31,7 +31,7 @@ Project Organization
 │   │   ├── celery-beat
 │   │   ├── celery-scrapper
 │   │   └── predicter
-│   ├── licenta_code
+│   ├── fakepred
 │   │   ├── celery
 │   │   ├── celery_beat
 │   │   ├── celery_scrapper
