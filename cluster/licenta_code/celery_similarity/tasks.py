@@ -88,6 +88,7 @@ regex:
 
 space = re.compile(r" +")
 numbers = re.compile(r"\[[1-9]+\]")
+para = re.compile(r"\([1-9]+\)")
 ghi = re.compile(r"'")
 abos = re.compile(r'"')
 
@@ -96,6 +97,7 @@ def clean_text(text: str) -> str:
     text = numbers.sub(" ", text)
     text = ghi.sub(" ", text)
     text = abos.sub(" ", text)
+    text = para.sub(" ", text)
     text = space.sub(" ", text).strip()
     return text
 
@@ -105,18 +107,22 @@ def similarity():
 
     col = worker_state.mongodb_connect_to_collection()
 
-    for entry in col.find({"searched": 2}):
+    index: int = 0
+    for entry in col.find({"searched": 2}).sort("date", -1).limit(100):
+        index += 1
+        if index == 100:
+            break
         entry_obj = Entry.parse_obj(entry)
         logger.info(f"{entry_obj.site} - {entry_obj.title}")
 
-        sentences_list_title: list[str] = []
+        sentences_list_title: list[str] = [entry_obj.title]
         indexes_list_title: list[int] = []
         for index, alike_news in enumerate(entry_obj.alike_news):
             if alike_news is not None:
                 sentences_list_title.append(clean_text(alike_news.title))
                 indexes_list_title.append(index)
 
-        sentences_list_content: list[str] = []
+        sentences_list_content: list[str] = [entry_obj.content]
         indexes_list_content: list[int] = []
         for index, alike_news in enumerate(entry_obj.alike_news):
             if alike_news is not None:
@@ -132,6 +138,10 @@ def similarity():
         except Exception as e:
             logger.error(f"Error calculating similarity for entry {entry_obj.title}")
             logger.error(e)
+            col.update_one(
+                {"_id": entry.get("_id")},
+                {"$set": {"searched": -3}},
+            )
             continue
 
         for index, similarity_title, similarity_content in zip(
@@ -195,13 +205,13 @@ def celery_fill_scrapper(
     )
     try:
         have_lock = lock.acquire(blocking=False)
-        # if have_lock:
-        try:
-            similarity()
-        except Exception as e:
-            print(e)
-        # else:
-        #     logger.info(f"{pre_str}: lock taken")
+        if have_lock:
+            try:
+                similarity()
+            except Exception as e:
+                print(e)
+        else:
+            logger.info(f"{pre_str}: lock taken")
     finally:
         if have_lock:
             lock.release()

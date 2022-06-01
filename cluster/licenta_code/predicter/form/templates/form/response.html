@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+  {% load static %}
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+    />
+    <title>Fake news predicter</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{% static '/img/favicon.ico' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static '/bootstrap/css/bootstrap.min.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Montserrat:400,700"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Kaushan+Script"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700"
+    />
+    <link rel="stylesheet" href="{% static '/fonts/font-awesome.min.css' %}" />
+    <link rel="stylesheet" href="{% static '/css/Login-Form-Dark.css' %}" />
+    <link
+      rel="stylesheet"
+      href="{% static '/css/Registration-Form-with-Photo.css' %}"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  </head>
+
+  <body id="page-top">
+    <header
+      class="masthead"
+      style="color: var(--gray-dark); background: var(--gray-dark)"
+    >
+      <div id="top" class="intro-text">
+        <h1
+          style="
+            color: var(--white);
+            margin-top: -150px;
+            font-size: 50px;
+            margin-bottom: 76px;
+          "
+        >
+          NEWS
+        </h1>
+        <h2
+          style="
+            color: var(--white);
+            margin-top: -150px;
+            font-size: 50px;
+            margin-bottom: 76px;
+          "
+        >
+          {{ result.title }}
+        </h2>
+        <h2
+          style="
+            color: var(--white);
+            margin-top: -150px;
+            font-size: 50px;
+            margin-bottom: 76px;
+          "
+        >
+          {{ result.content }}
+        </h2>
+        <h2
+          style="
+            color: var(--white);
+            margin-top: -150px;
+            font-size: 50px;
+            margin-bottom: 76px;
+          "
+        >
+          Label is: {{ result.label }}
+        </h2>
+        <h2
+          style="
+            color: var(--white);
+            margin-top: -150px;
+            font-size: 50px;
+            margin-bottom: 76px;
+          "
+        >
+          Title score is: {{ result.title_score }}
+        </h2>
+        <h2
+          style="
+            color: var(--white);
+            margin-top: -150px;
+            font-size: 50px;
+            margin-bottom: 76px;
+          "
+        >
+          Content score is: {{ result.cpntent_score }}
+        </h2>
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <a href="/"
+          ><button
+            class="btn btn-primary"
+            style="
+              background: var(--gray-dark);
+              border-color: var(--white);
+              color: var(--white);
+            "
+          >
+            BACK
+          </button></a
+        >
+      </div>
+    </header>
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <span class="copyright">Copyright&nbsp;© Lihor 2022</span>
+          </div>
+          <div class="col-md-4">
+            <ul class="list-inline social-buttons">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/IoachimLihor" target="_blank"
+                  ><i class="fa fa-twitter"></i
+                ></a>
+              </li>
+              <li class="list-inline-item">
+                <a
+                  href="https://www.facebook.com/profile.php?id=100009397325432"
+                  target="_blank"
+                  ><i class="fa fa-facebook"></i
+                ></a>
+              </li>
+              <li class="list-inline-item">
+                <a
+                  href="https://www.linkedin.com/in/ioachim-lihor-61b528187/"
+                  target="_blank"
+                  ><i class="fa fa-linkedin"></i
+                ></a>
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <ul class="list-inline quicklinks">
+              <li class="list-inline-item"></li>
+              <li class="list-inline-item"></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script src="{% static '/js/jquery.min.js' %}"></script>
+    <script src="{% static '/js/js_check.js' %}"></script>
+    <script src="{% static '/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="{% static '/js/agency.js' %}"></script>
+  </body>
+</html>

@@ -66,17 +66,21 @@ def clean_text(text: str) -> str:
 
 
 def extract_from_news(url: str) -> NewsInfo:
-    if url.split(".")[-1] in ["pdf", "doc", "docx"]:
-        return NewsInfo("", "")
+    empty_return = NewsInfo("", "")
+    if url.split(".")[-1] in ["pdf", "doc", "docx", "xls", "xlsx", "txt"]:
+        return empty_return
 
     if url.split(".")[-1] in ["jpg", "jpeg", "png"]:
-        return NewsInfo("", "")
+        return empty_return
 
     if ".pdf" in url:
-        return NewsInfo("", "")
+        return empty_return
 
     session = requests_html.HTMLSession()
     data = session.get(url, timeout=10)
+
+    if "PDF" in data.text:
+        return empty_return
 
     soup = bs4.BeautifulSoup(data.text)
     title: str = " ".join([p.text for p in soup.find_all("title")])
@@ -97,8 +101,11 @@ def complete():
     global worker_state
 
     col = worker_state.mongodb_connect_to_collection()
-
-    for entry in col.find({"searched": 1}):
+    index: int = 0
+    for entry in col.find({"searched": 1}).limit(100).sort("date", 1):
+        index += 1
+        if index == 100:
+            break
         entry_obj = Entry.parse_obj(entry)
 
         for index, news in enumerate(entry_obj.alike_news):
@@ -154,13 +161,13 @@ def celery_fill_scrapper(
     )
     try:
         have_lock = lock.acquire(blocking=False)
-        # if have_lock:
-        try:
-            complete()
-        except Exception as e:
-            print(e)
-        # else:
-        #     logger.info(f"{pre_str}: lock taken")
+        if have_lock:
+            try:
+                complete()
+            except Exception as e:
+                print(e)
+        else:
+            logger.info(f"{pre_str}: lock taken")
     finally:
         if have_lock:
             lock.release()

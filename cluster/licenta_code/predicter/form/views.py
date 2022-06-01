@@ -95,22 +95,13 @@ def upload(request: django.http.HttpRequest):
             except Exception:
                 return django.http.HttpResponseRedirect("error")
 
-            if label > 0.5:
-                return django.http.HttpResponseRedirect("true")
-            else:
-                return django.http.HttpResponseRedirect("false")
+            return django.shortcuts.render(
+                request, "form/response.html", context={"result": entry}
+            )
 
     return django.shortcuts.render(
         request, "form/index.html", context={"form": form, "result": news_list}
     )
-
-
-def false(request: django.http.HttpRequest):
-    return django.shortcuts.render(request, "form/false.html")
-
-
-def true(request: django.http.HttpRequest):
-    return django.shortcuts.render(request, "form/true.html")
 
 
 def error(request: django.http.HttpRequest):
