@@ -70,7 +70,7 @@ releases:
         pullPolicy: Always
     - ingress:
         enabled: true
-        hostname: {{ tpl "licenta.lihor.ro" . }}
+        hostname: {{ tpl "predicter.aa.minikube.com" . }}
 
   - name: celery-beat
     chart: ../celery-beat-chart
@@ -138,3 +138,37 @@ releases:
         celery: {{- toYaml $.Values.celery | nindent 10 }}
         mongodb: {{- toYaml $.Values.mongodb | nindent 10 }}
         redis: {{- toYaml $.Values.redis | nindent 10 }}
+
+  - name: restapi-content-predicter
+    chart: ../restapi-content-predicter-chart
+    namespace: default
+    values:
+    - image:
+        name: "{{ .Values.minikube }}/restapi-content-predicter"
+        tag: 1.0.0
+        pullPolicy: Always
+    - ingress:
+        enabled: true
+        hostname: "restapi.content.predicter.minikube.com"
+    - config:
+        listen:
+          host: "0.0.0.0"
+          port: 80
+    - replicaCount: 1
+
+  - name: restapi-title-predicter
+    chart: ../restapi-title-predicter-chart
+    namespace: default
+    values:
+    - image:
+        name: "{{ .Values.minikube }}/restapi-title-predicter"
+        tag: 1.0.0
+        pullPolicy: Always
+    - ingress:
+        enabled: true
+        hostname: "restapi.title.predicter.minikube.com"
+    - config:
+        listen:
+          host: "0.0.0.0"
+          port: 80
+    - replicaCount: 1

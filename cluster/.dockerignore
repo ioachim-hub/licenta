@@ -4,9 +4,3 @@
 .gitignore
 
 __pycache__
-
-**/*.bin
-**/*.pkl
-
-fakepred/predicter/model/**/*
-fakepred/predicter/train_models/**/*

@@ -1,2 +1,3 @@
 celerybeat-schedule
 venv-*
+trained_models

@@ -10,7 +10,7 @@ class FakeRoBERTModel(nn.Module):
         super(FakeRoBERTModel, self).__init__()
         # embedding
         self.bert = transformers.AutoModel.from_pretrained(
-            "model/bert-base-romanian-cased-v1"
+            "dumitrescustefan/bert-base-romanian-cased-v1"
         )
 
         # first convolutional layers

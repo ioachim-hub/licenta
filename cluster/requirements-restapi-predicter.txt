@@ -1,0 +1,22 @@
+numpy==1.22.3
+pandas==1.4.2
+pydantic==1.9.0
+cachetools==5.0.0
+
+# MongoDB related
+pymongo==4.1.0
+# pymogo zstd compression
+zstandard==0.17.0
+# pymongo snappy compression
+python-snappy==0.6.1
+
+# rest api
+fastapi==0.75.1
+uvicorn==0.17.6
+
+requests==2.27.1
+
+# predicting
+scikit-learn==1.0.2
+torch==1.11.0
+transformers==4.17.0

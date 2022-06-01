@@ -1,7 +1,7 @@
-name: restapi-title-predict
+name: restapi-title-predicter
 
 image:
-  name: "radcom/restapi-title-predict"
+  name: "radcom/restapi-title-predicter"
   tag: "1.0.0"
   pullPolicy: "Always"
 
@@ -9,7 +9,7 @@ replicaCount: 1
 
 ingress:
   enabled: false
-  hostname: restapi-title-predict.aa.minikube.radcom.com
+  hostname: restapi.title.predicter.minikube.com
 
 service:
   port: 80
@@ -19,5 +19,4 @@ nodeSelector:
   hostname: "machine-hostname"
 
 config:
-  environment: "minikube"
   listen: {}

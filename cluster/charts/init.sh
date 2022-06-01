@@ -28,4 +28,6 @@ ${MINIKUBE_IP} ingress.minikube.com
 ${MINIKUBE_IP} grafana.monitoring.minikube.com prometheus.monitoring.minikube.com
 ${MINIKUBE_IP} mongodb.minikube.com
 ${MINIKUBE_IP} grafana.minikube.com
+${MINIKUBE_IP} restapi-content-predicter.minikube.com
+${MINIKUBE_IP} restapi-title-predicter.minikube.com
 EOF

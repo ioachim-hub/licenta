@@ -197,5 +197,27 @@
             "dockerfile": "docker/celery-similarity/Dockerfile",
             "context": "./"
         }
+    },
+    {
+        "name": "restapi-content-predicter",
+        "tag": [
+            "1.0.0"
+        ],
+        "force": true,
+        "build": {
+            "dockerfile": "docker/restapi-content-predicter/Dockerfile",
+            "context": "./"
+        }
+    },
+    {
+        "name": "restapi-title-predicter",
+        "tag": [
+            "1.0.0"
+        ],
+        "force": true,
+        "build": {
+            "dockerfile": "docker/restapi-title-predicter/Dockerfile",
+            "context": "./"
+        }
     }
 ]

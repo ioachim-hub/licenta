@@ -1,5 +1,7 @@
 from typing import Optional
 
+import json
+import requests  # type: ignore
 import datetime
 import dataclasses
 
@@ -9,21 +11,11 @@ import django.shortcuts
 
 from form.form import ArticleForm, MONGODB_NEWS_COLLECTION_NAME, MongoForm
 from utils import dbHandler
-from model.predict import predict
 from model.common import (
-    model_title,
-    model_content,
-    device,
-    TOKENIZER,
     extract_from_news,
     NewsInfo,
 )
 from cleaner.model import Cleaner
-
-TOKENIZER = TOKENIZER
-device = device
-model_title = model_title
-model_content = model_content
 
 cleaner = Cleaner()
 
@@ -87,21 +79,28 @@ def upload(request: django.http.HttpRequest):
                 title = form.cleaned_data.get("title")
                 if title is not None:
                     title = cleaner.map_dataframe(title, 0, 0.2, 0.2)[0]
-                    outputs_title = predict(
-                        text=title,
-                        model=model_title,
-                        tokenizer=TOKENIZER,
-                        device=device,
-                    )[0][0]
+
                 content = form.cleaned_data.get("content")
                 if content is not None:
                     content = cleaner.map_dataframe(content, 0, 0.2, 0.2)[0]
-                    outputs_content = predict(
-                        text=content,
-                        model=model_content,
-                        tokenizer=TOKENIZER,
-                        device=device,
-                    )[0][0]
+
+                try:
+                    outputs = requests.post(
+                        "http://restapi-content-predicter:80/predict",
+                        data=json.dumps({"content": content}),
+                    ).json()
+                    outputs_content = outputs["score"]
+                except Exception:
+                    outputs_content = 0.5
+
+                try:
+                    outputs = requests.post(
+                        "http://restapi-title-predicter:80/predict",
+                        data=json.dumps({"content": title}),
+                    ).json()
+                    outputs_title = outputs["score"]
+                except Exception:
+                    outputs_title = 0.5
 
                 label = 80 * outputs_content / 100 + 20 * outputs_title / 100
                 entry = MongoForm(

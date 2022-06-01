@@ -1,0 +1,6 @@
+apiVersion: v2
+name: restapi-content-predicter-chart
+description: restapi-content-predicter
+
+version: "1.0.0"
+appVersion: "1.0.0"
