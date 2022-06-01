@@ -12,4 +12,6 @@ COPY ./docker/celery-similarity/docker-entrypoint.sh /opt/docker-entrypoint.sh
 
 ENV PYTHONUNBUFFERED=1 PYTHONOPTIMIZE=0 PYTHONDONTWRITEBYTECODE=1
 
+RUN chmod 777 /root/
+
 ENTRYPOINT ["/opt/docker-entrypoint.sh"]

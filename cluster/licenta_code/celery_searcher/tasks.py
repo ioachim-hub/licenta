@@ -83,7 +83,8 @@ def get_meta(search):
         if meta[-3:] == "...":
             meta = meta[:-3]
         if "—" in meta[:20]:
-            meta = meta[meta.find("—") + 2 :]
+            pos = meta.find("—") + 2
+            meta = meta[pos:]
     except selenium.common.exceptions.NoSuchElementException:
         meta = ""
     return meta
@@ -156,14 +157,22 @@ def search():
 
     col = worker_state.mongodb_connect_to_collection()
 
-    for entry in col.find({"searched": 0, "title_keywords": {"$exists": False}}):
+    index: int = 0
+    for entry in (
+        col.find({"searched": 0, "title_keywords": {"$exists": False}})
+        .limit(100)
+        .sort("date", 1)
+    ):
+        index += 1
+        if index == 100:
+            break
         entry_obj = Entry.parse_obj(entry)
         entry_obj.title_keywords = extract_keywords(entry_obj.title)
         entry_obj.content_keywords = extract_keywords(entry_obj.content)
 
         try:
             alike_news = []
-            if len(entry_obj.title_keywords) > 1:
+            if len(entry_obj.title_keywords) >= 1:
                 links_to_search: list[str] = [
                     link
                     for link in extract_first_page_links(entry_obj.title_keywords)
@@ -171,6 +180,8 @@ def search():
                 ]
                 alike_news = [SearchedNews(**link).dict() for link in links_to_search]
 
+            if len(alike_news) == 0:
+                raise Exception("No news found")
             col.update_one(
                 {"_id": entry.get("_id")},
                 {
@@ -218,13 +229,13 @@ def celery_fill_scrapper(
     )
     try:
         have_lock = lock.acquire(blocking=False)
-        # if have_lock:
-        try:
-            search()
-        except Exception as e:
-            print(e)
-        # else:
-        #     logger.info(f"{pre_str}: lock taken")
+        if have_lock:
+            try:
+                search()
+            except Exception as e:
+                print(e)
+        else:
+            logger.info(f"{pre_str}: lock taken")
     finally:
         if have_lock:
             lock.release()
