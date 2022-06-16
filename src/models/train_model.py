@@ -85,7 +85,7 @@ def run():
     best_accuracy = 0
 
     logging.info("Training model...")
-    for epoch in range(7, src.models.config.EPOCHS):
+    for epoch in range(0, src.models.config.EPOCHS):
         logging.info(f"Starting epoch {epoch}...")
         logging.info(f"Epoch: {epoch}")
         src.models.engine.train_fn(
