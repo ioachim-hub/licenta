@@ -24,6 +24,8 @@ def accuracy_score(targets, outputs):
 def loss_fn(outputs, targets):
     loss = nn.L1Loss()(outputs, targets.view(-1, 1))
     acc = accuracy_score(targets=targets, outputs=outputs)
+    # logging.info(f"outputs: {outputs}")
+    # logging.info(f"targets: {targets}")
     logging.info(f"loss:{loss}")
     logging.info(f"accuracy: {acc}")
     return loss
