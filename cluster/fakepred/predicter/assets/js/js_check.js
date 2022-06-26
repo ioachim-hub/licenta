@@ -32,3 +32,13 @@ var check = function () {
     document.getElementById("submit").disabled = true;
   }
 };
+
+var valid = function () {
+  document.getElementById("label").innerHTML = "Valid";
+};
+
+var fake = function () {
+  document.getElementById("label").innerHTML = "Fake";
+};
+
+var check_submit = function () {};
