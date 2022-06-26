@@ -64,7 +64,7 @@
           id="create"
           style="margin-top: 149px; border-color: var(--dark)"
         >
-          <div class="col-lg-8 mx-auto" style="padding-top: 92px">
+          <div class="col-lg-8 mx-auto" style="padding-top: 92px; width: 75%">
             <h2 class="text-uppercase" style="color: var(--white)">
               Insert news
             </h2>
@@ -75,7 +75,8 @@
                 border-radius: 13px;
                 border-style: solid;
                 border-color: var(--white);
-                max-width: 100%;
+                max-width: 75%;
+                margin: 0 auto;
               "
             >
               {% csrf_token %}
@@ -88,8 +89,8 @@
                   name="link"
                   placeholder="Link"
                   style="margin: 0px"
-                  disabled="true"
                   value="{{ result.form.link }}"
+                  readonly
                 />
                 {% else %}
                 <input
@@ -99,7 +100,7 @@
                   name="link"
                   placeholder="Link"
                   style="margin: 0px"
-                  onchange="check()"
+                  oninput="check()"
                 />
                 {% endif %}
               </div>
@@ -128,7 +129,7 @@
                   name="title"
                   placeholder="Title"
                   style="margin: 0px"
-                  onchange="check()"
+                  oninput="check()"
                 />
                 {% endif %}
               </div>
@@ -297,7 +298,93 @@
         </div>
       </div>
     </section>
-    <section style="background: var(--gray-dark)"></section>
+    <section style="background: var(--gray-dark)">
+      <div
+        class="text-center d-xl-flex flex-fill justify-content-xl-center align-items-xl-center"
+        id="create"
+        style="margin-top: 20px; border-color: var(--dark)"
+      >
+        <div class="col-lg-8 mx-auto" style="padding-top: 10px">
+          <h2 class="text-uppercase" style="color: var(--white)">
+            Log in to contribute
+          </h2>
+
+          {% csrf_token %}
+          <form
+            method="post"
+            action="contribution"
+            style="
+              border-radius: 13px;
+              border-style: solid;
+              border-color: var(--white);
+              max-width: 50%;
+              margin: 0 auto;
+            "
+          >
+            {% csrf_token %}
+            <div class="form-group">
+              <input
+                class="form-control"
+                id="username"
+                type="text"
+                name="username"
+                placeholder="Username"
+                style="margin: 0px"
+              />
+              <input
+                class="form-control"
+                id="password"
+                type="password"
+                name="password"
+                placeholder="Password"
+                value="{{ result.form.title }}"
+                width="100%"
+                style="
+                  margin-top: 10px;
+                  word-wrap: break-word;
+                  word-break: break-all;
+                "
+              />
+              <button
+                class="btn btn-primary btn-block"
+                type="submit"
+                id="submit_login"
+                style="
+                  margin-top: 10px;
+                  background: var(--white);
+                  border-color: var(--white);
+                  color: var(--gray-dark);
+                "
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+    {% if result.status != "" %}
+    <script>
+      $(document).ready(function(){
+          $("#log").modal('show');
+      });
+    </script>
+    {% endif %}
+    <div class="modal fade text-center" role="dialog" tabindex="-1" id="log">
+        <div class="modal-dialog modal-lg" role="dialog">
+            <div class="modal-content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8 mx-auto">
+                            <div class="modal-body">
+                                <h2 class="text-uppercase">{{ result.status }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <footer>
       <div class="container">
         <div class="row">

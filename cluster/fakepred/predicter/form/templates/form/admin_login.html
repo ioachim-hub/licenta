@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  {% load static %}
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+    />
+    <title>Fake news predicter</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{% static '/img/favicon.ico' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static '/bootstrap/css/bootstrap.min.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Montserrat:400,700"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Kaushan+Script"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700"
+    />
+    <link rel="stylesheet" href="{% static '/fonts/font-awesome.min.css' %}" />
+    <link rel="stylesheet" href="{% static '/css/Login-Form-Dark.css' %}" />
+    <link
+      rel="stylesheet"
+      href="{% static '/css/Registration-Form-with-Photo.css' %}"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  </head>
+
+  <body id="page-top">
+    <header
+      class="masthead"
+      style="color: var(--gray-dark); background: var(--gray-dark)"
+    >
+      <div id="top" class="intro-text">
+        <h1
+          style="
+            color: var(--white);
+            margin-top: -150px;
+            font-size: 50px;
+            margin-bottom: 0px;
+          "
+        >
+          FAKE NEWS PREDICTER - ADMIN
+        </h1>
+    </header>
+    <section style="background: var(--gray-dark)">
+      <div
+        class="text-center d-xl-flex flex-fill justify-content-xl-center align-items-xl-center"
+        id="create"
+        style="margin-top: -350px; border-color: var(--dark)"
+      >
+        <div class="col-lg-8 mx-auto" style="padding-top: -50px">
+          <h2 class="text-uppercase" style="color: var(--white)">
+            Log in admin
+          </h2>
+          <form
+            method="post"
+            action="admin_login"
+            style="
+              border-radius: 13px;
+              border-style: solid;
+              border-color: var(--white);
+              max-width: 50%;
+              margin: 0 auto;
+            "
+          >
+            {% csrf_token %}
+            <div class="form-group">
+              <input
+                class="form-control"
+                id="username"
+                type="text"
+                name="username"
+                placeholder="Username"
+                style="margin: 0px"
+              />
+              <input
+                class="form-control"
+                id="password"
+                type="password"
+                name="password"
+                placeholder="Password"
+                value="{{ result.form.title }}"
+                width="100%"
+                style="
+                  margin-top: 10px;
+                  word-wrap: break-word;
+                  word-break: break-all;
+                "
+              />
+              <button
+                class="btn btn-primary btn-block"
+                type="submit"
+                id="submit_login"
+                style="
+                  margin-top: 10px;
+                  background: var(--white);
+                  border-color: var(--white);
+                  color: var(--gray-dark);
+                "
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <span class="copyright">Copyright&nbsp;© Lihor 2022</span>
+          </div>
+          <div class="col-md-4">
+            <ul class="list-inline social-buttons">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/IoachimLihor" target="_blank"
+                  ><i class="fa fa-twitter"></i
+                ></a>
+              </li>
+              <li class="list-inline-item">
+                <a
+                  href="https://www.facebook.com/profile.php?id=100009397325432"
+                  target="_blank"
+                  ><i class="fa fa-facebook"></i
+                ></a>
+              </li>
+              <li class="list-inline-item">
+                <a
+                  href="https://www.linkedin.com/in/ioachim-lihor-61b528187/"
+                  target="_blank"
+                  ><i class="fa fa-linkedin"></i
+                ></a>
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <ul class="list-inline quicklinks">
+              <li class="list-inline-item"></li>
+              <li class="list-inline-item"></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script src="{% static '/js/jquery.min.js' %}"></script>
+    <script src="{% static '/js/js_check.js' %}"></script>
+    <script src="{% static '/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="{% static '/js/agency.js' %}"></script>
+  </body>
+</html>
