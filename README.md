@@ -1,14 +1,14 @@
-licenta
+FakeRoBERT
 ==============================
 
-Licenta NLP and Server-Web product
+This project consists in a trained model that predict credibility scores of news that is integrated in a web server.
 
 Project Organization
 
 ------------
 ```bash
 ├── cluster
-│   ├── charts
+│   ├── charts                           - Kubernetes deployment
 │   │   ├── app-infra
 │   │   ├── app-logic
 │   │   ├── celery-beat-chart
@@ -25,22 +25,22 @@ Project Organization
 │   │   ├── mgr.py
 │   │   ├── predicter-chart
 │   │   └── tags.yaml
-│   ├── configs
-│   ├── dashboards
-│   ├── docker
+│   ├── configs                         - Microservices configurations
+│   ├── dashboards                      - Grafana dashboards
+│   ├── docker                          - Docker images
 │   │   ├── celery-beat
 │   │   ├── celery-scrapper
 │   │   └── predicter
-│   ├── fakepred
-│   │   ├── celery
-│   │   ├── celery_beat
-│   │   ├── celery_scrapper
-│   │   ├── mongodb
-│   │   ├── predicter
-│   │   ├── redis
-│   │   ├── scrapper
-│   │   └── utils
-├── data
+│   └── fakepred                        - Microservices sources
+│       ├── celery
+│       ├── celery_beat
+│       ├── celery_scrapper
+│       ├── mongodb
+│       ├── predicter
+│       ├── redis
+│       ├── scrapper
+│       └── utils
+├── data                                - Data for models
 │   ├── external
 │   ├── interim
 │   ├── processed
@@ -56,7 +56,7 @@ Project Organization
 │           ├── ministeruldeinterne
 │           ├── MinisterulSanatatii
 │           └── timesnewroman
-├── docs
+├── docs                                - Documents
 │   ├── articles
 │   ├── commands.rst
 │   ├── conf.py
@@ -79,16 +79,28 @@ Project Organization
 │   └── figures
 ├── requirements.txt
 ├── setup.py
-├── src
+├── src                                 - Model processing sources
+│   ├── cleaner
 │   ├── data
 │   ├── features
 │   ├── models
 │   └── visualization
 ├── src.egg-info
 ├── target
+├── visualization                       - Output from data exploring
 ├── test_environment.py
 └── tox.ini
 ```
 --------
 
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+If you need to find something in this repository, consult the filesystem above.
+
+You need to install a python virtual environment with `Python 3.10` version.
+
+Install requirements(root file `requirements.txt` and also `requirements.txt` files from `cluster` directory) in installed venv.
+
+To deploy this repository you need technologies like:
+- minikube
+- helm
+- helmfile
+- k8s lens
