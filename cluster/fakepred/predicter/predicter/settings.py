@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "predicter.aa.minikube.com",
     "127.0.0.1",
+    "206.189.242.130",
     "localhost",
     "licenta.lihor.ro",
     "cloud.digitalocean.com",
@@ -73,9 +74,6 @@ TEMPLATES = [
         },
     },
 ]
-
-WSGI_APPLICATION = "predicter.wsgi.application"
-
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases

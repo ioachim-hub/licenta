@@ -23,7 +23,7 @@ repositories:
 releases:
   - name: grafana
     chart: bitnami/grafana
-    version: 7.0.8
+    version: 7.9.1
     values:
     - image:
         name: "{{ .Values.DOCKER_IO }}/grafana/grafana"
@@ -70,7 +70,7 @@ releases:
         pullPolicy: Always
     - ingress:
         enabled: true
-        hostname: {{ tpl "predicter.aa.minikube.com" . }}
+        hostname: {{ tpl "licenta.lihor.ro" . }}
 
   - name: celery-beat
     chart: ../celery-beat-chart

@@ -123,6 +123,28 @@
         </div>
       </div>
     </section>
+    {% if status != "" %}
+    <script>
+      $(document).ready(function(){
+          $("#log").modal('show');
+      });
+    </script>
+    {% endif %}
+    <div class="modal fade text-center" role="dialog" tabindex="-1" id="log">
+        <div class="modal-dialog modal-lg" role="dialog">
+            <div class="modal-content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8 mx-auto">
+                            <div class="modal-body">
+                                <h2 class="text-uppercase">{{ status }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <footer>
       <div class="container">
         <div class="row">

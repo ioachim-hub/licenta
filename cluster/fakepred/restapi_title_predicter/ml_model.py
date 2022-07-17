@@ -45,16 +45,6 @@ class FakeRoBERTModel(nn.Module):
             return_dict=False,
         )
 
-        # x, y = pooled_output.size()
-        # pooled_output = torch.reshape(pooled_output, (x, y, 1))
-
-        # conv1_2 = self.pool1_4(self.drop1_3(torch.relu(self.conv1_2(pooled_output))))
-        # x = conv1_2
-        # x = self.pool1_5(self.drop1_5(F.relu(self.conv1_5(x))))
-        # x = self.pool1_6(self.drop1_6(F.relu(self.conv1_6(x))))
-        # x = self.flatt_7(x)
-        # x = self.dense1_8(x)
-
         x = self.drop1_6(pooled_output)
         x = self.dense_1(x)
         x = self.dense_3(x)

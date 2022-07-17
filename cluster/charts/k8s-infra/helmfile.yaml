@@ -65,7 +65,6 @@ releases:
       {{- toYaml .Values.tcpforwards | nindent 8 }}
     - metrics:
         enabled: true
-        # TODO: re-enable when we actually start monitoring
         serviceMonitor:
           enabled: false
     - controller:
@@ -102,7 +101,6 @@ releases:
           #   Error: UPGRADE FAILED: failed to create resource: Internal error occurred: failed calling webhook "validate.nginx.ingress.kubernetes.io": Post "https://ingress-nginx-controller-admission.default.svc:443/networking/v1beta1/ingresses?timeout=10s": x509: certificate is valid for minikubeCA, control-plane.minikube.internal, kubernetes.default.svc.cluster.local, kubernetes.default.svc, kubernetes.default, kubernetes, localhost, not ingress-nginx-controller-admission.default.svc
           # https://github.com/kubernetes/ingress-nginx/issues/5968
           # https://github.com/kubernetes/ingress-nginx/issues/5968#issuecomment-849772666
-          # Nicolae Rosia: for some reason I don't see ingress-nginx-admission-patch
           enabled: false
           patch:
             image:
@@ -287,7 +285,6 @@ releases:
         accessModes:
         - ReadWriteOnce
         size: 10Gi
-    # TODO: re-enable when we actually start monitoring
     - serviceMonitor:
         enabled: false
 
@@ -316,6 +313,5 @@ releases:
         logLevel: info
         serverPort: 3101
         lokiAddress: http://loki:3100/loki/api/v1/push
-    # TODO: re-enable when we actually start monitoring
     - serviceMonitor:
         enabled: false
