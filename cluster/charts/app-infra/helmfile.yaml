@@ -24,10 +24,10 @@ releases:
   - name: mongodb
     # chart: https://github.com/bitnami/charts/tree/master/bitnami/mongodb
     # history:
-    # https://artifacthub.io/packages/helm/bitnami/mongodb/11.0.3
-    # https://charts.bitnami.com/bitnami/mongodb-11.0.3.tgz
+    # https://artifacthub.io/packages/helm/bitnami/mongodb/13.8.1
+    # https://charts.bitnami.com/bitnami/mongodb-13.8.1.tgz
     chart: bitnami/mongodb
-    version: 11.0.3
+    version: 13.8.1
     values:
       - image:
           registry: "{{ .Values.DOCKER_IO }}"
@@ -65,7 +65,7 @@ releases:
           failureThreshold: 3
           successThreshold: 1
       - metrics:
-          enabled: true
+          enabled: false
           image:
             registry: "{{ .Values.DOCKER_IO }}"
             repository: "bitnami/mongodb-exporter"
@@ -77,10 +77,10 @@ releases:
   - name: rabbitmq
     # chart: https://github.com/bitnami/charts/tree/master/bitnami/rabbitmq
     # history: https://github.com/bitnami/charts/commits/master/bitnami/rabbitmq
-    # https://artifacthub.io/packages/helm/bitnami/rabbitmq/8.29.0
-    # https://charts.bitnami.com/bitnami/rabbitmq-8.29.0.tgz
+    # https://artifacthub.io/packages/helm/bitnami/rabbitmq/11.10.0
+    # https://charts.bitnami.com/bitnami/rabbitmq-11.10.0.tgz
     chart: bitnami/rabbitmq
-    version: 8.29.0
+    version: 11.10.0
     values:
       - image:
           registry: "{{ .Values.DOCKER_IO }}"
@@ -108,18 +108,18 @@ releases:
       - ingress:
           enabled: true
           path: "/"
-          hostname: "rabbitmq"
+          hostname: "rabbitmq.minikube.com"
       - extraConfiguration: |-
           collect_statistics_interval = 10000
           consumer_timeout = 31622400000
 
   # chart: https://github.com/bitnami/charts/tree/master/bitnami/redis
   # history: https://github.com/bitnami/charts/commits/master/bitnami/redis
-  # https://artifacthub.io/packages/helm/bitnami/redis/16.4.2
-  # https://charts.bitnami.com/bitnami/redis-16.4.2.tgz
+  # https://artifacthub.io/packages/helm/bitnami/redis/17.8.0
+  # https://charts.bitnami.com/bitnami/redis-17.8.0.tgz
   - name: redis
     chart: bitnami/redis
-    version: 16.4.2
+    version: 17.8.0
     values:
       - image:
           registry: "{{ .Values.DOCKER_IO }}"

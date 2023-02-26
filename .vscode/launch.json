@@ -1,0 +1,73 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+        },
+        {
+            "name": "Python: Test",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "purpose": [
+                "debug-test",
+                "debug-in-terminal"
+            ],
+        },
+        {
+            "name": "train",
+            "type": "python",
+            "request": "launch",
+            "module": "src.models.train_model",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "purpose": [
+                "debug-test",
+                "debug-in-terminal"
+            ],
+        },
+        {
+            "name": "clean_data",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/cleaner/cleaner.py",
+            "cwd": "${workspaceFolder}/src/cleaner",
+            "console": "integratedTerminal",
+            "args": [
+                "../../configs/cleaner-config.json",
+            ],
+        },
+        {
+            "name": "server",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/cluster/fakepred/predicter/manage.py",
+            "cwd": "${workspaceFolder}/cluster/fakepred/predicter",
+            "console": "integratedTerminal",
+            "args": [
+                "runserver",
+                "--noreload",
+                "127.0.0.1:8080",
+            ],
+        },
+        {
+            "name": "plot_data",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/data/plot_training.py",
+            "cwd": "${workspaceFolder}/src/data",
+            "console": "integratedTerminal",
+            "args": [
+                "../../logs_.txt",
+                "../../visualization/traininig/logs_.html"
+            ],
+        }
+    ]
+}

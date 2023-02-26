@@ -2,7 +2,7 @@ import torch
 import transformers
 
 from sklearn import preprocessing
-from src.models.model import FakeRoBERTModel  # import: ignore
+from models.model import FakeRoBERTModel  # import: ignore
 
 
 def predict(

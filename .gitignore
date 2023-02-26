@@ -66,8 +66,8 @@ target/
 # Pycharm
 .idea
 
-# VS Code
-.vscode/
+# # VS Code
+# .vscode/
 
 # Spyder
 .spyproject/
@@ -92,4 +92,4 @@ target/
 .csv
 
 # venv file
-licenta-env/
+venv/

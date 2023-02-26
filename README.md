@@ -122,3 +122,59 @@ If you want to deploy the system, build the containers and install the final pro
 - use `K8s Lens` to view the cluster deployed
 
 If you want to run the source codes separately to cluster, the `./.vscode/` directory contains run commands.
+
+# Instalation
+
+## Dev
+
+Create virtual environment:
+
+```sh
+rm -rf ./venv/
+
+python3.9 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+## Deploy
+
+Go to `cluster/charts`
+
+```sh
+# delete old cluster if exists
+minikube delete
+# init new cluster
+./init.sh
+```
+
+Add docker registry to insecure registries: `/etc/docker/daemon.json`
+```
+{
+    "insecure-registries" : [ "srp.minikube.com:5000" ]
+}
+```
+
+Push images to srp
+```sh
+./docker_mgr.sh
+```
+
+Update repo
+```
+helm repo update
+```
+
+Deploy components:
+```
+cd ./k8s-infra
+helmfile sync
+
+cd ../
+cd ./app-infra
+helmfile sync
+
+cd ../
+cd ./app=logic
+helmfile sync
+```

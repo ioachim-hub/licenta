@@ -42,8 +42,8 @@ class Entry(pydantic.BaseModel):
     title: str = ""
     content: str = ""
     date: pd.Timestamp = pd.Timestamp.min
-    label: int
-    searched: int
+    label: int = 0
+    searched: int = 0
     alike_news: Optional[list[Optional[SearchedNews]]] = []
     title_keywords: Optional[list[str]] = []
     content_keywords: Optional[list[str]] = []

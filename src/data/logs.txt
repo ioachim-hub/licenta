@@ -1,0 +1,24 @@
+20:32:02,996 urllib3.connectionpool DEBUG Starting new HTTPS connection (1): huggingface.co:443
+20:32:03,527 urllib3.connectionpool DEBUG https://huggingface.co:443 "HEAD /dumitrescustefan/bert-base-romanian-cased-v1/resolve/main/vocab.txt HTTP/1.1" 200 0
+20:32:03,530 urllib3.connectionpool DEBUG Starting new HTTPS connection (1): huggingface.co:443
+20:32:04,351 urllib3.connectionpool DEBUG https://huggingface.co:443 "HEAD /dumitrescustefan/bert-base-romanian-cased-v1/resolve/main/added_tokens.json HTTP/1.1" 404 0
+20:32:04,359 urllib3.connectionpool DEBUG Starting new HTTPS connection (1): huggingface.co:443
+20:32:05,276 urllib3.connectionpool DEBUG https://huggingface.co:443 "HEAD /dumitrescustefan/bert-base-romanian-cased-v1/resolve/main/special_tokens_map.json HTTP/1.1" 404 0
+20:32:05,279 urllib3.connectionpool DEBUG Starting new HTTPS connection (1): huggingface.co:443
+20:32:05,952 urllib3.connectionpool DEBUG https://huggingface.co:443 "HEAD /dumitrescustefan/bert-base-romanian-cased-v1/resolve/main/tokenizer_config.json HTTP/1.1" 200 0
+20:32:05,957 urllib3.connectionpool DEBUG Starting new HTTPS connection (1): huggingface.co:443
+20:32:06,954 urllib3.connectionpool DEBUG https://huggingface.co:443 "HEAD /dumitrescustefan/bert-base-romanian-cased-v1/resolve/main/config.json HTTP/1.1" 200 0
+20:32:07,18 root INFO Starting training...
+20:32:07,18 root INFO Loading data...
+20:32:50,535 urllib3.connectionpool DEBUG Starting new HTTPS connection (1): huggingface.co:443
+20:32:51,112 urllib3.connectionpool DEBUG https://huggingface.co:443 "HEAD /dumitrescustefan/bert-base-romanian-cased-v1/resolve/main/vocab.txt HTTP/1.1" 200 0
+20:32:51,115 urllib3.connectionpool DEBUG Starting new HTTPS connection (1): huggingface.co:443
+20:32:51,860 urllib3.connectionpool DEBUG https://huggingface.co:443 "HEAD /dumitrescustefan/bert-base-romanian-cased-v1/resolve/main/added_tokens.json HTTP/1.1" 404 0
+20:32:51,866 urllib3.connectionpool DEBUG Starting new HTTPS connection (1): huggingface.co:443
+20:32:52,812 urllib3.connectionpool DEBUG https://huggingface.co:443 "HEAD /dumitrescustefan/bert-base-romanian-cased-v1/resolve/main/special_tokens_map.json HTTP/1.1" 404 0
+20:32:52,816 urllib3.connectionpool DEBUG Starting new HTTPS connection (1): huggingface.co:443
+20:32:53,673 urllib3.connectionpool DEBUG https://huggingface.co:443 "HEAD /dumitrescustefan/bert-base-romanian-cased-v1/resolve/main/tokenizer_config.json HTTP/1.1" 200 0
+20:32:53,679 urllib3.connectionpool DEBUG Starting new HTTPS connection (1): huggingface.co:443
+20:32:54,220 urllib3.connectionpool DEBUG https://huggingface.co:443 "HEAD /dumitrescustefan/bert-base-romanian-cased-v1/resolve/main/config.json HTTP/1.1" 200 0
+20:32:54,285 root INFO Starting training...
+20:32:54,285 root INFO Loading data...

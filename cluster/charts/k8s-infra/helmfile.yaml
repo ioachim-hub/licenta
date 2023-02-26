@@ -243,6 +243,7 @@ releases:
 
 # https://github.com/grafana/helm-charts/tree/main/charts/loki
 - name: loki
+  installed: false
   chart: grafana/loki
   version: 2.6.0
   namespace: monitoring
@@ -290,6 +291,7 @@ releases:
 
 # https://github.com/grafana/helm-charts/tree/main/charts/promtail
 - name: promtail
+  installed: false
   chart: grafana/promtail
   version: 3.8.1
   namespace: monitoring

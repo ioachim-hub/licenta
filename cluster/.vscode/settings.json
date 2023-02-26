@@ -1,0 +1,8 @@
+{
+    "activestate.promptRuntimeCreation": false,
+    "python.linting.mypyEnabled": false,
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.formatting.provider": "black",
+    "python.formatting.blackArgs": ["--line-length", "100"]
+}

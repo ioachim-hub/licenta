@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td,
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+
+        h1 {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="content: center;">Table of top 25 news</h1>
+    <table>
+        <tr>
+            <th>Nr</th>
+            <th>Title</th>
+            <th>Article</th>
+            <th>Label</th>
+        </tr>
+        {% for r in result %}
+        <tr>
+            <th> {{ forloop.counter }}</th>
+            <th> {{ r.title }}</th>
+            <th> {{ r.article }}</th>
+            <th>
+                {% if r.label == 1 %}
+                    true
+                {% else %}
+                    false
+                {% endif %}
+            </th>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+
+</html>

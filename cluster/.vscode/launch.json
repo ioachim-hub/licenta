@@ -1,0 +1,196 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false,
+        },
+        {
+            "name": "Python: Test",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "purpose": [
+                "debug-test",
+                "debug-in-terminal"
+            ],
+        },
+        {
+            "name": "celery_beat (minikube)",
+            "type": "python",
+            "module": "celery",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "SETTINGS_PATH": "${workspaceFolder}/configs/celery-beat/config.json"
+            },
+            "args": [
+                "--app",
+                "fakepred.celery_beat.main.app",
+                "beat",
+                "--loglevel",
+                "DEBUG"
+            ],
+            "console": "integratedTerminal",
+            "request": "launch"
+        },
+        {
+            "name": "celery_scrapper (minikube)",
+            "type": "python",
+            "module": "celery",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "SETTINGS_PATH": "${workspaceFolder}/configs/celery-scrapper/config.json"
+            },
+            "args": [
+                "--app",
+                "fakepred.celery_scrapper.celery_app.app",
+                "worker",
+                "-E",
+                "--without-gossip",
+                "--without-mingle",
+                "--without-heartbeat",
+                "-n",
+                "scrapp@vscode",
+                "--loglevel",
+                "DEBUG",
+                "--pool",
+                "solo",
+                "--concurrency",
+                "1",
+                "--prefetch-multiplier",
+                "1",
+                "--queues",
+                "scrapp",
+            ],
+            "console": "integratedTerminal",
+            "request": "launch"
+        },
+        {
+            "name": "celery_searcher (minikube)",
+            "type": "python",
+            "module": "celery",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "SETTINGS_PATH": "${workspaceFolder}/configs/celery-searcher/config.json"
+            },
+            "args": [
+                "--app",
+                "fakepred.celery_searcher.celery_app.app",
+                "worker",
+                "-E",
+                "--without-gossip",
+                "--without-mingle",
+                "--without-heartbeat",
+                "-n",
+                "searcher@vscode",
+                "--loglevel",
+                "DEBUG",
+                "--pool",
+                "solo",
+                "--concurrency",
+                "1",
+                "--prefetch-multiplier",
+                "1",
+                "--queues",
+                "searcher",
+            ],
+            "console": "integratedTerminal",
+            "request": "launch"
+        },
+        {
+            "name": "celery_completer (minikube)",
+            "type": "python",
+            "module": "celery",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "SETTINGS_PATH": "${workspaceFolder}/configs/celery-completer/config.json"
+            },
+            "args": [
+                "--app",
+                "fakepred.celery_completer.celery_app.app",
+                "worker",
+                "-E",
+                "--without-gossip",
+                "--without-mingle",
+                "--without-heartbeat",
+                "-n",
+                "completer@vscode",
+                "--loglevel",
+                "DEBUG",
+                "--pool",
+                "solo",
+                "--concurrency",
+                "1",
+                "--prefetch-multiplier",
+                "1",
+                "--queues",
+                "completer",
+            ],
+            "console": "integratedTerminal",
+            "request": "launch"
+        },
+        {
+            "name": "celery_similarity (minikube)",
+            "type": "python",
+            "module": "celery",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "SETTINGS_PATH": "${workspaceFolder}/configs/celery-completer/config.json"
+            },
+            "args": [
+                "--app",
+                "fakepred.celery_similarity.celery_app.app",
+                "worker",
+                "-E",
+                "--without-gossip",
+                "--without-mingle",
+                "--without-heartbeat",
+                "-n",
+                "similarity@vscode",
+                "--loglevel",
+                "DEBUG",
+                "--pool",
+                "solo",
+                "--concurrency",
+                "1",
+                "--prefetch-multiplier",
+                "1",
+                "--queues",
+                "similarity",
+            ],
+            "console": "integratedTerminal",
+            "request": "launch"
+        },
+        {
+            "name": "restapi_content_predict (minikube)",
+            "type": "python",
+            "module": "fakepred.restapi_content_predicter.main",
+            "request": "launch",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "SETTINGS_PATH": "${workspaceFolder}/configs/restapi/restapi_content_predicter_config.json"
+            }
+        },
+        {
+            "name": "restapi_title_predict (minikube)",
+            "type": "python",
+            "module": "fakepred.restapi_title_predicter.main",
+            "request": "launch",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "SETTINGS_PATH": "${workspaceFolder}/configs/restapi/restapi_title_predicter_config.json"
+            }
+        }
+    ]
+}

@@ -23,7 +23,7 @@ repositories:
 releases:
   - name: grafana
     chart: bitnami/grafana
-    version: 7.9.1
+    version: 8.2.27
     values:
     - image:
         name: "{{ .Values.DOCKER_IO }}/grafana/grafana"

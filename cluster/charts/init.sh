@@ -7,7 +7,7 @@ KUBE_CONTEXT="minikube"
 minikube start \
 --container-runtime=docker \
 --docker-opt="default-ulimit=nofile=102400:102400" \
---kubernetes-version=1.21.9 \
+--kubernetes-version=1.23.16 \
 --nodes=1 \
 --install-addons=false \
 --insecure-registry=srp.minikube.com:5000 \

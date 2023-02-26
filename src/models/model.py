@@ -3,14 +3,14 @@ import torch
 import torch.nn as nn
 
 import transformers
-import src.models.config
+import models.config
 
 
 class FakeRoBERTModel(nn.Module):
     def __init__(self):
         super(FakeRoBERTModel, self).__init__()
         # embedding
-        self.bert = transformers.AutoModel.from_pretrained(src.models.config.BERT_PATH)
+        self.bert = transformers.AutoModel.from_pretrained(models.config.BERT_PATH)
 
         # first convolutional layers
         self.conv1_2 = nn.Conv1d(768, 512, kernel_size=1, stride=1, padding=0)
